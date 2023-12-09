@@ -1,4 +1,4 @@
-const MembersTable = {
+const DutyDaysList = {
     template: `
 <div>
 <h2>すべての当番日</h2>
@@ -50,7 +50,7 @@ const ScheduleApp = {
 
     },
     components: {
-        MembersTable,
+        DutyDaysList,
     },
 };
 
