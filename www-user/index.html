@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゴミ当番</title>
+    <script type="text/javascript" src="https://unpkg.com/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <script src="./index.js"></script>
+</head>
+<body id="app">
+    <div><h1>{{myName}}さん</h1></div>
+    <div><h2>次のあなたのゴミステーション掃除当番は <span style="font-size: 1.5em;">{{nextDutyDay}}</span> です。</h2></div>
+    <div>
+        <h4>次回以降は
+        <!-- ここはまだ適当に出してるだけ -->
+            <span v-for="(dutyday, index) in dutyDays">{{dutyday}}<span v-if="index !== dutyDays.length - 1">, </span></span>
+            です。
+        </h4>
+    </div>
+    <members-table ref="membersTable"></members-table>
+</body>
+</html>
