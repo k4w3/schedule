@@ -1,0 +1,13 @@
+-- select
+select * from TMembers;
+
+-- insert
+insert into TMembers (team, name, ruby) values(1, '山田太郎','ヤマダタロウ');
+insert into TMembers (team, name, ruby) values(1, '佐藤次郎','サトウジロウ');
+insert into TMembers (team, name, ruby) values(1, '鈴木三郎','スズキサブロウ');
+
+-- update
+UPDATE TMembers SET team=1 name='ほげ', rubu='hoge' WHERE id=1
+
+-- delete
+DELETE FROM TMembers WHERE id=1

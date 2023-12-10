@@ -41,13 +41,6 @@ const ScheduleApp = {
 
     },
     methods: {
-        drawMember () {
-            selectTList();
-        }
-        // async show () {
-        //     this.name = await 
-        // }
-
     },
     components: {
         DutyDaysList,
