@@ -2,5 +2,6 @@ CREATE TABLE IF NOT EXISTS TMembers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   team INTEGER,
   name TEXT,
-  ruby TEXT
+  ruby TEXT,
+  ord INTEGER
 )

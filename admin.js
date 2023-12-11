@@ -11,7 +11,7 @@ router.get("/api/TMembers", (context) => {
     console.log("GET /api/TMembers");
     const db = new DB("schedule.db");
     // let res = db.query("SELECT * FROM TMembers");
-    let res = db.queryEntries("SELECT id, team, name, ruby FROM TMembers");
+    let res = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord");
 
     db.close();
     context.response.body = res;
@@ -23,9 +23,14 @@ router.get("/api/TMembers/:id", (context) => {
     console.log(queryParams);
 
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, team, name, ruby FROM TMembers WHERE id=?", [queryParams.id]);
+    let res = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [queryParams.id]);
     db.close();
-    context.response.body = res;
+    if (res.length > 0) {
+        context.response.body = res[0];
+    } else {
+        context.response.headers.set("content-type", "application/json; charset=UTF-8");
+        context.response.body = "null";
+    }
 });
 
 router.post("/api/TMembers", async (context) => {
@@ -33,8 +38,8 @@ router.post("/api/TMembers", async (context) => {
     const params = await context.request.body({type:"form"}).value;
 
     const db = new DB("schedule.db");
-    db.query("INSERT INTO TMembers (team, name, ruby) VALUES (?,?,?)",
-    [params.get("team"), params.get("name"), params.get("ruby")]);
+    db.query("INSERT INTO TMembers (team, name, ruby, ord) VALUES (?,?,?,?)",
+    [params.get("team"), params.get("name"), params.get("ruby"), params.get("ord")]);
     db.close();
     context.response.body = "OK";
 });
@@ -47,8 +52,8 @@ router.put("/api/TMembers/:id", async (context) => {
     console.log(postParams);
 
     const db = new DB("schedule.db");
-    db.query("UPDATE TMembers SET team=? name=?, ruby=? WHERE id=?",
-    [postParams.get("team"), postParams.get("name"), postParams.get("ruby"), queryParams.id]);
+    db.query("UPDATE TMembers SET team=?, name=?, ruby=?, ord=? WHERE id=?",
+    [postParams.get("team"), postParams.get("name"), postParams.get("ruby"), postParams.get("ord"), queryParams.id]);
     db.close();
     context.response.body = "OK";
 });
