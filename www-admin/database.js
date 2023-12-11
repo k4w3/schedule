@@ -20,12 +20,13 @@ function getTMembers(id) {
     });
 };
 
-function addTMembers(team, name, ruby) {
+function addTMembers(team, name, ruby, ord) {
     return new Promise((resolve, reject) => {
 
         let postData = "team=" + encodeURIComponent(team);
         postData += "&name=" + encodeURIComponent(name);
         postData += "&ruby=" + encodeURIComponent(ruby);
+        postData += "&ord=" + encodeURIComponent(ord);
 
         let req = new XMLHttpRequest();
         req.open("POST", "/api/TMembers");
@@ -44,12 +45,13 @@ function addTMembers(team, name, ruby) {
     });
 };
 
-function putTMembers(team, name, ruby, id) {
+function putTMembers(team, name, ruby, ord, id) {
     return new Promise((resolve, reject) => {
 
         let putData = "team=" + encodeURIComponent(team);
         putData += "&name=" + encodeURIComponent(name);
         putData += "&ruby=" + encodeURIComponent(ruby);
+        putData += "&ord=" + encodeURIComponent(ord);
 
         let req = new XMLHttpRequest();
         req.open("PUT", "/api/TMembers/" + id);

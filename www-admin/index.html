@@ -11,14 +11,61 @@
 </head>
 <body id="app">
     <h1>管理画面</h1>
-    <h2 style="border-bottom: 1px solid">メンバー 新規追加</h2>
+    <h2 style="border-bottom: 1px solid">メンバーの追加</h2>
     <div>
         <form>
             <button type="button" v-on:click="$refs.editForm.open()">追加</button>
         </form>
     </div>
-    <h2 style="border-bottom: 1px solid">メンバー 一覧</h2>
+
+    <div>
+    <h2 style="border-bottom: 1px solid">メンバーの一覧</h2>
+        <form>
+            <table border="1" v-if="members.length > 0">
+            <thead>
+            <tr>
+                <th>班</th>
+                <th>名前</th>
+                <th>フリガナ</th>
+                <th>順番</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in members">
+                <td>{{item.team}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.ruby}}</td>
+                <td>{{item.ord}}</td>
+                <td><button type="button" v-on:click="$refs.editForm.open(item)">編集</button></td>
+                <td><button type="button" v-on:click="deleteMember(item.id)">削除</button></td>
+            </tr>
+            </tbody>
+            </table>
+        </form>
+    </div>
+
+    <div>
+    <h2 style="border-bottom: 1px solid">すべての当番日</h2>
+    <table border="1" v-if="members.length > 0">
+        <thead>
+        <tr>
+            <th>当番日</th>
+            <th>班</th>
+            <th>名前</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(dutyDay, index) in dutyDays">
+            <td>{{dutyDay}}</td>
+            <td>{{members[index % members.length].team}}</td>
+            <td>{{members[index % members.length].name}}</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+
     <edit-form ref="editForm"></edit-form>
-    <duty-days-list ref="dutyDaysList"></duty-days-list>
 </body>
 </html>
