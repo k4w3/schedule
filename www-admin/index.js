@@ -73,7 +73,7 @@ const DutyDaysList = {
     template: `
 <div>
 <h2>すべての当番日</h2>
-<table border="1">
+<table border="1" v-if="this.$parent.members.length > 0">
     <thead>
     <tr>
         <th>当番日</th>
@@ -96,8 +96,8 @@ const DutyDaysList = {
 const ManageApp = {
     data () {
         return {
-            members: [{id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"}, {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"}, {id: 3, team: 2, name: "鈴木 三郎", ruby: "サブロウ"}],
-            // members: [],
+            // members: [{id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"}, {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"}, {id: 3, team: 2, name: "鈴木 三郎", ruby: "サブロウ"}],
+            members: [],
             dutyDays: ["2024年5月1日", "2024年6月1日", "2024年7月1日", "2024年8月1日", "2024年9月1日", "2024年10月1日", "2024年11月1日", "2024年12月1日", "2025年1月1日", "2025年2月1日", "2025年3月1日"],
         };
         // return {
@@ -106,12 +106,11 @@ const ManageApp = {
         // };
     },
     mounted () {
-        // this.membersReload();
+        this.membersReload();
     },
     methods: {
         async membersReload () {
             this.members = JSON.parse(await selectTMembers());
-            console.log(this.members);
         },
     },
     components: {
