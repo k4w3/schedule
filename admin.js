@@ -71,6 +71,71 @@ router.delete("/api/TMembers/:id", async (context) => {
 });
 
 
+
+router.get("/api/TScheduleConf", (context) => {
+    console.log("GET /api/TScheduleConf");
+    const db = new DB("schedule.db");
+    // let res = db.query("SELECT * FROM TScheduleConf");
+    let res = db.queryEntries("SELECT id, week, ord FROM TScheduleConf ORDER BY id");
+
+    db.close();
+    context.response.body = res;
+});
+
+router.get("/api/TScheduleConf/:id", (context) => {
+    console.log("GET /api/TScheduleConf:id");
+    const queryParams = getQuery(context, { mergeParams: true });
+    console.log(queryParams);
+
+    const db = new DB("schedule.db");
+    let res = db.queryEntries("SELECT id, week, ord FROM TScheduleConf WHERE id=?", [queryParams.id]);
+    db.close();
+    if (res.length > 0) {
+        context.response.body = res[0];
+    } else {
+        context.response.headers.set("content-type", "application/json; charset=UTF-8");
+        context.response.body = "null";
+    }
+});
+
+router.post("/api/TScheduleConf", async (context) => {
+    console.log("POST /api/TScheduleConf");
+    const params = await context.request.body({type:"form"}).value;
+
+    const db = new DB("schedule.db");
+    db.query("INSERT INTO TScheduleConf (week, ord) VALUES (?,?)",
+    [params.get("week"), params.get("ord")]);
+    db.close();
+    context.response.body = "OK";
+});
+
+router.put("/api/TScheduleConf/:id", async (context) => {
+    console.log("put /api/TScheduleConf");
+    const queryParams = getQuery(context, { mergeParams: true });
+    const postParams = await context.request.body({type:"form"}).value;
+    console.log(queryParams);
+    console.log(postParams);
+
+    const db = new DB("schedule.db");
+    db.query("UPDATE TScheduleConf SET week=?, ord=? WHERE id=?",
+    [postParams.get("week"), postParams.get("ord"), queryParams.id]);
+    db.close();
+    context.response.body = "OK";
+});
+
+router.delete("/api/TScheduleConf/:id", async (context) => {
+    console.log("delete /api/TScheduleConf");
+    const queryParams = getQuery(context, { mergeParams: true });
+    console.log(queryParams);
+
+    const db = new DB("schedule.db");
+    db.query("DELETE FROM TScheduleConf WHERE id=?",
+    [queryParams.id]);
+    db.close();
+    context.response.body = "OK";
+});
+
+
 const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());

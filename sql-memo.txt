@@ -2,12 +2,25 @@
 select * from TMembers;
 
 -- insert
-insert into TMembers (team, name, ruby) values(1, '山田太郎','ヤマダタロウ');
-insert into TMembers (team, name, ruby) values(1, '佐藤次郎','サトウジロウ');
-insert into TMembers (team, name, ruby) values(1, '鈴木三郎','スズキサブロウ');
+insert into TMembers (team, name, ruby, ord) values(1, '山田太郎','ヤマダタロウ', 1);
+insert into TMembers (team, name, ruby, ord) values(1, '佐藤次郎','サトウジロウ', 2);
+insert into TMembers (team, name, ruby, ord) values(2, '鈴木三郎','スズキサブロウ', 3);
+insert into TMembers (team, name, ruby, ord) values(2, '高橋四郎','タカハシシロウ', 4);
 
 -- update
-UPDATE TMembers SET team=1 name='ほげ', rubu='hoge' WHERE id=1
+UPDATE TMembers SET team=1 name='ほげ', rubu='hoge' ord='5' WHERE id=1
 
 -- delete
 DELETE FROM TMembers WHERE id=1
+
+curl -X GET http://localhost:8090/api/TMembers | jq .
+curl -X GET http://localhost:8090/api/TMembers/3 | jq .
+curl -X POST http://localhost:8090/api/TMembers/ -d "team=10" -d "name=田中五郎" -d "ruby=タナカゴロウ" -d "ord=5"
+curl -X PUT http://localhost:8090/api/TMembers/5 -d "team=100" -d "name=田中田中" -d "ruby=タナカタナカ" -d "ord=500"
+curl -X DELETE http://localhost:8090/api/TMembers/5
+
+curl -X GET http://localhost:8090/api/TScheduleConf | jq .
+curl -X GET http://localhost:8090/api/TScheduleConf/3 | jq .
+curl -X POST http://localhost:8090/api/TScheduleConf/ -d "week=6" -d "ord=5"
+curl -X PUT http://localhost:8090/api/TScheduleConf/12 -d "week=10" -d "ord=10"
+curl -X DELETE http://localhost:8090/api/TScheduleConf/12
