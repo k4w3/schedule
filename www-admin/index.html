@@ -11,15 +11,14 @@
 </head>
 <body id="app">
     <h1>管理画面</h1>
-    <h2 style="border-bottom: 1px solid">メンバーの追加</h2>
+    <h2 style="border-bottom: 1px solid">メンバーの設定</h2>
     <div>
         <form>
-            <button type="button" v-on:click="$refs.editForm.open()">追加</button>
+            <button type="button" v-on:click="$refs.membersEditForm.open()">新規追加</button>
         </form>
     </div>
 
     <div>
-    <h2 style="border-bottom: 1px solid">メンバーの一覧</h2>
         <form>
             <table border="1" v-if="members.length > 0">
             <thead>
@@ -38,7 +37,7 @@
                 <td>{{item.name}}</td>
                 <td>{{item.ruby}}</td>
                 <td>{{item.ord}}</td>
-                <td><button type="button" v-on:click="$refs.editForm.open(item)">編集</button></td>
+                <td><button type="button" v-on:click="$refs.membersEditForm.open(item)">編集</button></td>
                 <td><button type="button" v-on:click="deleteMember(item.id)">削除</button></td>
             </tr>
             </tbody>
@@ -46,8 +45,31 @@
         </form>
     </div>
 
-    <div>
     <h2 style="border-bottom: 1px solid">ゴミ収集日の設定</h2>
+    <div>
+        <form>
+            <button type="button" v-on:click="$refs.scheduleConfEditForm.open()">新規追加</button>
+        </form>
+    </div>
+    <div>
+    <table border="1" v-if="scheduleConfs.length > 0">
+        <thead>
+        <tr>
+            <th>曜日</th>
+            <th>第</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in scheduleConfs">
+            <td>{{getWeekString(item.week)}}</td>
+            <td>{{item.ord}}</td>
+            <td><button type="button" v-on:click="$refs.scheduleConfEditForm.open(item)">編集</button></td>
+            <td><button type="button" v-on:click="deleteScheduleConf(item.id)">削除</button></td>
+        </tr>
+        </tbody>
+    </table>
     </div>
 
     <div>
@@ -70,6 +92,7 @@
     </table>
     </div>
 
-    <edit-form ref="editForm"></edit-form>
+    <members-edit-form ref="membersEditForm"></members-edit-form>
+    <schedule-conf-edit-form ref="scheduleConfEditForm"></schedule-conf-edit-form>
 </body>
 </html>
