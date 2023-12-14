@@ -197,6 +197,41 @@ const ManageApp = {
                     return "不明";
             }
         },
+        getDutyDaysInMonth (year, month, arrScheduleConf) {
+            let result = [];
+            const firstDay = this.getFirstDayInMonth(year, month);
+            const distances = [];
+            arrScheduleConf.forEach((conf) => {
+                distances.push(this.getDistanceFromFirstDayToWeek(firstDay, conf.week, conf.ord));
+            });
+            // console.log(distances);
+            distances.sort();
+            // console.log(distances);
+            distances.forEach((distance) => {
+                let cal = this.getFirstDayInMonth(year, month);
+                cal.setDate(cal.getDate() + distance);
+                // console.log("getMonth:", cal.getMonth());
+                // console.log("month:", month);
+                // console.log("getTime:", cal.getTime());
+                if (cal.getMonth() === month) {
+                    result.push(cal.getTime());
+                }
+            });
+            return result;
+        },
+        getFirstDayInMonth (year, month) {
+            return new Date(year, month, 1);
+        },
+        getDistanceFromFirstDayToWeek (firstDay, week, ord) {
+            let weekOfFirstDay = firstDay.getDay();
+            let distanceToWeek;
+            if (week >= weekOfFirstDay) {
+                distanceToWeek = week - weekOfFirstDay; // 初日の曜日より後の曜日の場合
+            } else {
+                distanceToWeek = week + (7 - weekOfFirstDay) // 初日の曜日より前の曜日の場合
+            }
+            return distanceToWeek + (7 * (ord - 1));
+        },
     },
     components: {
         MembersEditForm,
@@ -205,7 +240,36 @@ const ManageApp = {
 };
 
 window.onload = function () {
-    console.log("hello");
     const app = Vue.createApp(ManageApp);
-    app.mount('#app');
+    // app.mount('#app');
+    const test = app.mount('#app');
+
+    // 0 日曜日
+    // 1 月曜日
+    // 2 火曜日
+    // 3 水曜日
+    // 4 木曜日
+    // 5 金曜日
+    // 6 土曜日
+
+    // // let today = new Date();
+    // // let today = new Date(2023, 10, 1); // 2023/11/1 水曜日
+    // let today = new Date(2024, 0, 11); //2024/1/11 木曜日
+    // let currentYear = today.getFullYear();
+    // let currentMonth = today.getMonth();
+    // let currentWeek = today.getDay();
+    // let firstDay = new Date(currentYear, currentMonth, 1);
+    // let weekOfFirstDay = firstDay.getDay();
+    // console.log("today:", today);
+    // console.log("currentYear:", currentYear);
+    // console.log("currentMonth:", currentMonth + 1);
+    // console.log("currentWeek:", currentWeek);
+    // console.log("firstDay:", firstDay);
+    // console.log("weekOfFirstDay:", weekOfFirstDay);
+
+    // let firstDay = test.getFirstDayInMonth(2023, 12);
+    // let distance = test.getDistanceFromFirstDayToWeek(firstDay, 5, 2); // 今月の初日から次の第2金曜日までの距離
+    // console.log(distance);
+    // test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":1,"ord":1},{"id":2,"week":1,"ord":2},{"id":3,"week":1,"ord":3},{"id":4,"week":1,"ord":4},{"id":5,"week":1,"ord":5},{"id":6,"week":5,"ord":1},{"id":7,"week":5,"ord":2},{"id":8,"week":5,"ord":3},{"id":9,"week":5,"ord":4},{"id":10,"week":5,"ord":5},{"id":11,"week":3,"ord":1}]);
+    console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":5,"ord":2},{"id":2,"week":3,"ord":1}]));
 };
