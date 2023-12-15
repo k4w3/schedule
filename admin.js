@@ -76,7 +76,7 @@ router.get("/api/TScheduleConf", (context) => {
     console.log("GET /api/TScheduleConf");
     const db = new DB("schedule.db");
     // let res = db.query("SELECT * FROM TScheduleConf");
-    let res = db.queryEntries("SELECT id, week, ord FROM TScheduleConf ORDER BY id");
+    let res = db.queryEntries("SELECT id, weekday, ord FROM TScheduleConf ORDER BY id");
 
     db.close();
     context.response.body = res;
@@ -88,7 +88,7 @@ router.get("/api/TScheduleConf/:id", (context) => {
     console.log(queryParams);
 
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, week, ord FROM TScheduleConf WHERE id=?", [queryParams.id]);
+    let res = db.queryEntries("SELECT id, weekday, ord FROM TScheduleConf WHERE id=?", [queryParams.id]);
     db.close();
     if (res.length > 0) {
         context.response.body = res[0];
@@ -103,8 +103,8 @@ router.post("/api/TScheduleConf", async (context) => {
     const params = await context.request.body({type:"form"}).value;
 
     const db = new DB("schedule.db");
-    db.query("INSERT INTO TScheduleConf (week, ord) VALUES (?,?)",
-    [params.get("week"), params.get("ord")]);
+    db.query("INSERT INTO TScheduleConf (weekday, ord) VALUES (?,?)",
+    [params.get("weekday"), params.get("ord")]);
     db.close();
     context.response.body = "OK";
 });
@@ -117,8 +117,8 @@ router.put("/api/TScheduleConf/:id", async (context) => {
     console.log(postParams);
 
     const db = new DB("schedule.db");
-    db.query("UPDATE TScheduleConf SET week=?, ord=? WHERE id=?",
-    [postParams.get("week"), postParams.get("ord"), queryParams.id]);
+    db.query("UPDATE TScheduleConf SET weekday=?, ord=? WHERE id=?",
+    [postParams.get("weekday"), postParams.get("ord"), queryParams.id]);
     db.close();
     context.response.body = "OK";
 });

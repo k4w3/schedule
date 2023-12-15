@@ -77,7 +77,7 @@ const ScheduleConfEditForm = {
         return {
             showModal: false,
             id: "0",
-            week: "",
+            weekday: "",
             ord: "",
         };
     },
@@ -85,11 +85,11 @@ const ScheduleConfEditForm = {
         open (item) {
             if (item) {
                 this.id = item.id;
-                this.week = item.week;
+                this.weekday = item.weekday;
                 this.ord = item.ord;
             } else {
                 this.id = "0";
-                this.week = "";
+                this.weekday = "";
                 this.ord = "";
             }
             this.showModal = true
@@ -102,9 +102,9 @@ const ScheduleConfEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id === "0") {
-                await addTScheduleConf(this.week, this.ord);
+                await addTScheduleConf(this.weekday, this.ord);
             } else {
-                await putTScheduleConf(this.week, this.ord, this.id);
+                await putTScheduleConf(this.weekday, this.ord, this.id);
             }
             this.showModal = false;
             this.$parent.reloadScheduleConf();
@@ -116,13 +116,13 @@ const ScheduleConfEditForm = {
     <form>
         <div>
             曜日:
-            <label><input type="radio" v-model="week" value="0" checked>日</label>
-            <label><input type="radio" v-model="week" value="1">月</label>
-            <label><input type="radio" v-model="week" value="2">火</label>
-            <label><input type="radio" v-model="week" value="3">水</label>
-            <label><input type="radio" v-model="week" value="4">木</label>
-            <label><input type="radio" v-model="week" value="5">金</label>
-            <label><input type="radio" v-model="week" value="6">土</label>
+            <label><input type="radio" v-model="weekday" value="0" checked>日</label>
+            <label><input type="radio" v-model="weekday" value="1">月</label>
+            <label><input type="radio" v-model="weekday" value="2">火</label>
+            <label><input type="radio" v-model="weekday" value="3">水</label>
+            <label><input type="radio" v-model="weekday" value="4">木</label>
+            <label><input type="radio" v-model="weekday" value="5">金</label>
+            <label><input type="radio" v-model="weekday" value="6">土</label>
         </div>
         <div>
             第:
@@ -177,8 +177,8 @@ const ManageApp = {
                 this.reloadScheduleConf();
             };
         },
-        getWeekString (week) {
-            switch (week) {
+        getWeekdayString (weekday) {
+            switch (weekday) {
                 case 0:
                     return "日";
                 case 1:
@@ -202,7 +202,7 @@ const ManageApp = {
             const firstDay = this.getFirstDayInMonth(year, month);
             const distances = [];
             arrScheduleConf.forEach((conf) => {
-                distances.push(this.getDistanceFromFirstDayToWeek(firstDay, conf.week, conf.ord));
+                distances.push(this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord));
             });
             // console.log(distances);
             distances.sort();
@@ -222,15 +222,15 @@ const ManageApp = {
         getFirstDayInMonth (year, month) {
             return new Date(year, month, 1);
         },
-        getDistanceFromFirstDayToWeek (firstDay, week, ord) {
-            let weekOfFirstDay = firstDay.getDay();
-            let distanceToWeek;
-            if (week >= weekOfFirstDay) {
-                distanceToWeek = week - weekOfFirstDay; // 初日の曜日より後の曜日の場合
+        getDistanceFromFirstDayToWeekday (firstDay, weekday, ord) {
+            let weekdayOfFirstDay = firstDay.getDay();
+            let distanceToWeekday;
+            if (weekday >= weekdayOfFirstDay) {
+                distanceToWeekday = weekday - weekdayOfFirstDay; // 初日の曜日より後の曜日の場合
             } else {
-                distanceToWeek = week + (7 - weekOfFirstDay) // 初日の曜日より前の曜日の場合
+                distanceToWeekday = weekday + (7 - weekdayOfFirstDay) // 初日の曜日より前の曜日の場合
             }
-            return distanceToWeek + (7 * (ord - 1));
+            return distanceToWeekday + (7 * (ord - 1));
         },
     },
     components: {
@@ -257,28 +257,28 @@ window.onload = function () {
     // let today = new Date(2024, 0, 11); //2024/1/11 木曜日
     // let currentYear = today.getFullYear();
     // let currentMonth = today.getMonth();
-    // let currentWeek = today.getDay();
+    // let currentWeekday = today.getDay();
     // let firstDay = new Date(currentYear, currentMonth, 1);
-    // let weekOfFirstDay = firstDay.getDay();
+    // let weekdayOfFirstDay = firstDay.getDay();
     // console.log("today:", today);
     // console.log("currentYear:", currentYear);
     // console.log("currentMonth:", currentMonth + 1);
-    // console.log("currentWeek:", currentWeek);
+    // console.log("currentWeekday:", currentWeekday);
     // console.log("firstDay:", firstDay);
-    // console.log("weekOfFirstDay:", weekOfFirstDay);
+    // console.log("weekdayOfFirstDay:", weekdayOfFirstDay);
 
     // let firstDay = test.getFirstDayInMonth(2023, 12);
-    // let distance = test.getDistanceFromFirstDayToWeek(firstDay, 5, 2); // 今月の初日から次の第2金曜日までの距離
+    // let distance = test.getDistanceFromFirstDayToWeekday(firstDay, 5, 2); // 今月の初日から次の第2金曜日までの距離
     // console.log(distance);
-    // test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":1,"ord":1},{"id":2,"week":1,"ord":2},{"id":3,"week":1,"ord":3},{"id":4,"week":1,"ord":4},{"id":5,"week":1,"ord":5},{"id":6,"week":5,"ord":1},{"id":7,"week":5,"ord":2},{"id":8,"week":5,"ord":3},{"id":9,"week":5,"ord":4},{"id":10,"week":5,"ord":5},{"id":11,"week":3,"ord":1}]);
+    // test.getDutyDaysInMonth(2023, 11, [{"id":1,"weekday":1,"ord":1},{"id":2,"weekday":1,"ord":2},{"id":3,"weekday":1,"ord":3},{"id":4,"weekday":1,"ord":4},{"id":5,"weekday":1,"ord":5},{"id":6,"weekday":5,"ord":1},{"id":7,"weekday":5,"ord":2},{"id":8,"weekday":5,"ord":3},{"id":9,"weekday":5,"ord":4},{"id":10,"weekday":5,"ord":5},{"id":11,"weekday":3,"ord":1}]);
     let conf = [
-        {"id":1,"week":5,"ord":2}, // 第2金曜日
-        {"id":2,"week":3,"ord":1} // 第1水曜日
+        {"id":1,"weekday":5,"ord":2}, // 第2金曜日
+        {"id":2,"weekday":3,"ord":1} // 第1水曜日
     ];
 
     let days = test.getDutyDaysInMonth(2023, 12 - 1, conf);
     days.forEach((day) => {
         console.log(new Date(day));
     })
-    // console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":5,"ord":2},{"id":2,"week":3,"ord":1}]));
+    // console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"weekday":5,"ord":2},{"id":2,"weekday":3,"ord":1}]));
 };

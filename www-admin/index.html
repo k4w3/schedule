@@ -63,7 +63,7 @@
         </thead>
         <tbody>
         <tr v-for="item in scheduleConfs">
-            <td>{{getWeekString(item.week)}}</td>
+            <td>{{getWeekdayString(item.weekday)}}</td>
             <td>{{item.ord}}</td>
             <td><button type="button" v-on:click="$refs.scheduleConfEditForm.open(item)">編集</button></td>
             <td><button type="button" v-on:click="deleteScheduleConf(item.id)">削除</button></td>

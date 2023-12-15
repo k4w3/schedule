@@ -21,6 +21,6 @@ curl -X DELETE http://localhost:8090/api/TMembers/5
 
 curl -X GET http://localhost:8090/api/TScheduleConf | jq .
 curl -X GET http://localhost:8090/api/TScheduleConf/3 | jq .
-curl -X POST http://localhost:8090/api/TScheduleConf/ -d "week=6" -d "ord=5"
-curl -X PUT http://localhost:8090/api/TScheduleConf/12 -d "week=10" -d "ord=10"
+curl -X POST http://localhost:8090/api/TScheduleConf/ -d "weekday=6" -d "ord=5"
+curl -X PUT http://localhost:8090/api/TScheduleConf/12 -d "weekday=10" -d "ord=10"
 curl -X DELETE http://localhost:8090/api/TScheduleConf/12
