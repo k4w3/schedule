@@ -271,5 +271,14 @@ window.onload = function () {
     // let distance = test.getDistanceFromFirstDayToWeek(firstDay, 5, 2); // 今月の初日から次の第2金曜日までの距離
     // console.log(distance);
     // test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":1,"ord":1},{"id":2,"week":1,"ord":2},{"id":3,"week":1,"ord":3},{"id":4,"week":1,"ord":4},{"id":5,"week":1,"ord":5},{"id":6,"week":5,"ord":1},{"id":7,"week":5,"ord":2},{"id":8,"week":5,"ord":3},{"id":9,"week":5,"ord":4},{"id":10,"week":5,"ord":5},{"id":11,"week":3,"ord":1}]);
-    console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":5,"ord":2},{"id":2,"week":3,"ord":1}]));
+    let conf = [
+        {"id":1,"week":5,"ord":2}, // 第2金曜日
+        {"id":2,"week":3,"ord":1} // 第1水曜日
+    ];
+
+    let days = test.getDutyDaysInMonth(2023, 12 - 1, conf);
+    days.forEach((day) => {
+        console.log(new Date(day));
+    })
+    // console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"week":5,"ord":2},{"id":2,"week":3,"ord":1}]));
 };
