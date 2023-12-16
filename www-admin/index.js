@@ -232,6 +232,43 @@ const ManageApp = {
             }
             return distanceToWeekday + (7 * (ord - 1));
         },
+        getDutyDays () {
+            // 現在から1年分の当番の日を取得する
+            let today = new Date();
+            let dutyDaysForOneYear = [];
+
+            let conf = [
+                {"id":1,"weekday":5,"ord":2}, // 第2金曜日
+                {"id":2,"weekday":3,"ord":1} // 第1水曜日
+            ];
+
+            for (let i = 0; i < 12; i++) {
+                let dutyDaysInMonth = this.getDutyDaysInMonth(today.getFullYear(), today.getMonth(), conf);
+                dutyDaysForOneYear = (dutyDaysForOneYear.concat(dutyDaysInMonth));
+                // dutyDaysForOneYear.concat(dutyDaysInMonth);
+                // [...dutyDaysForOneYear, ...dutyDaysInMonth];
+                today.setMonth(today.getMonth() + 1);
+            }
+
+            let today2 = new Date();
+            let oneYearLater = new Date(today2);
+            oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
+
+            let result = [];
+            dutyDaysForOneYear.forEach((dutyDay) => {
+                if (today2.getTime() < dutyDay && dutyDay < oneYearLater.getTime()) {
+                    result.push(dutyDay);
+                }
+            });
+
+            // for (let i = 0; i < result.length; i++) {
+            //     let person = this.members[i % this.members.length];
+            //     console.log(result[i], person);
+            // }
+
+            // return dutyDaysForOneYear;
+            return result;
+        }
     },
     components: {
         MembersEditForm,
@@ -244,41 +281,28 @@ window.onload = function () {
     // app.mount('#app');
     const test = app.mount('#app');
 
-    // 0 日曜日
-    // 1 月曜日
-    // 2 火曜日
-    // 3 水曜日
-    // 4 木曜日
-    // 5 金曜日
-    // 6 土曜日
 
-    // // let today = new Date();
-    // // let today = new Date(2023, 10, 1); // 2023/11/1 水曜日
-    // let today = new Date(2024, 0, 11); //2024/1/11 木曜日
-    // let currentYear = today.getFullYear();
-    // let currentMonth = today.getMonth();
-    // let currentWeekday = today.getDay();
-    // let firstDay = new Date(currentYear, currentMonth, 1);
-    // let weekdayOfFirstDay = firstDay.getDay();
-    // console.log("today:", today);
-    // console.log("currentYear:", currentYear);
-    // console.log("currentMonth:", currentMonth + 1);
-    // console.log("currentWeekday:", currentWeekday);
-    // console.log("firstDay:", firstDay);
-    // console.log("weekdayOfFirstDay:", weekdayOfFirstDay);
 
-    // let firstDay = test.getFirstDayInMonth(2023, 12);
-    // let distance = test.getDistanceFromFirstDayToWeekday(firstDay, 5, 2); // 今月の初日から次の第2金曜日までの距離
-    // console.log(distance);
     // test.getDutyDaysInMonth(2023, 11, [{"id":1,"weekday":1,"ord":1},{"id":2,"weekday":1,"ord":2},{"id":3,"weekday":1,"ord":3},{"id":4,"weekday":1,"ord":4},{"id":5,"weekday":1,"ord":5},{"id":6,"weekday":5,"ord":1},{"id":7,"weekday":5,"ord":2},{"id":8,"weekday":5,"ord":3},{"id":9,"weekday":5,"ord":4},{"id":10,"weekday":5,"ord":5},{"id":11,"weekday":3,"ord":1}]);
-    let conf = [
-        {"id":1,"weekday":5,"ord":2}, // 第2金曜日
-        {"id":2,"weekday":3,"ord":1} // 第1水曜日
-    ];
 
-    let days = test.getDutyDaysInMonth(2023, 12 - 1, conf);
-    days.forEach((day) => {
-        console.log(new Date(day));
-    })
+    // let conf = [
+    //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
+    //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
+    // ];
+
+    // let days = test.getDutyDaysInMonth(2023, 12 - 1, conf);
+    // days.forEach((day) => {
+    //     console.log(new Date(day));
+    // })
+
     // console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"weekday":5,"ord":2},{"id":2,"weekday":3,"ord":1}]));
+
+    // console.log(test.getDutyDays());
+
+    let arrDutyDays = test.getDutyDays();
+    arrDutyDays.sort();
+    arrDutyDays.forEach((dutyDays) => {
+        let cal = new Date(dutyDays);
+        console.log(cal.getFullYear() + ", " + (cal.getMonth() + 1) + "月, " + cal.getDate() + "日, " + cal.getDay()); // 第2金曜日, 第1水曜日
+    });
 };
