@@ -145,16 +145,32 @@ const ScheduleConfEditForm = {
 const ManageApp = {
     data () {
         return {
-            // members: [{id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"}, {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"}, {id: 3, team: 2, name: "鈴木 三郎", ruby: "サブロウ"}],
+            // members: [
+            //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
+            //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
+            //     {id: 3, team: 2, name: "鈴木 三郎", ruby: "サブロウ"}
+            // ],
             members: [],
+            // scheduleConfs: [
+            //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
+            //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
+            // ],
             scheduleConfs: [],
-            // dutyDays: [],
-            dutyDays: ["2024年5月1日", "2024年6月1日", "2024年7月1日", "2024年8月1日", "2024年9月1日", "2024年10月1日", "2024年11月1日", "2024年12月1日", "2025年1月1日", "2025年2月1日", "2025年3月1日"],
+            // dutyDays: [
+            //     "2024年5月1日",
+            //     "2024年6月1日",
+            //     "2024年7月1日",
+            //     "2024年8月1日",
+            //     "2024年9月1日",
+            //     "2024年10月1日"
+            // ],
+            dutyDays: [],
         };
     },
-    mounted () {
+    async mounted () {
         this.reloadMembers();
-        this.reloadScheduleConf();
+        await this.reloadScheduleConf();
+        this.reloadDutyDays(this.scheduleConfs);
     },
     methods: {
         async reloadMembers () {
@@ -197,59 +213,20 @@ const ManageApp = {
                     return "不明";
             }
         },
-        getDutyDaysInMonth (year, month, arrScheduleConf) {
-            let result = [];
-            const firstDay = this.getFirstDayInMonth(year, month);
-            const distances = [];
-            arrScheduleConf.forEach((conf) => {
-                distances.push(this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord));
-            });
-            // console.log(distances);
-            distances.sort();
-            // console.log(distances);
-            distances.forEach((distance) => {
-                let cal = this.getFirstDayInMonth(year, month);
-                cal.setDate(cal.getDate() + distance);
-                // console.log("getMonth:", cal.getMonth());
-                // console.log("month:", month);
-                // console.log("getTime:", cal.getTime());
-                if (cal.getMonth() === month) {
-                    result.push(cal.getTime());
-                }
-            });
-            return result;
-        },
-        getFirstDayInMonth (year, month) {
-            return new Date(year, month, 1);
-        },
-        getDistanceFromFirstDayToWeekday (firstDay, weekday, ord) {
-            let weekdayOfFirstDay = firstDay.getDay();
-            let distanceToWeekday;
-            if (weekday >= weekdayOfFirstDay) {
-                distanceToWeekday = weekday - weekdayOfFirstDay; // 初日の曜日より後の曜日の場合
-            } else {
-                distanceToWeekday = weekday + (7 - weekdayOfFirstDay) // 初日の曜日より前の曜日の場合
-            }
-            return distanceToWeekday + (7 * (ord - 1));
-        },
-        getDutyDays () {
-            // 現在から1年分の当番の日を取得する
+        // 現在から1年分の当番の日を計算する
+        reloadDutyDays (arrScheduleConf) {
             let today = new Date();
             let dutyDaysForOneYear = [];
 
-            let conf = [
-                {"id":1,"weekday":5,"ord":2}, // 第2金曜日
-                {"id":2,"weekday":3,"ord":1} // 第1水曜日
-            ];
-
             for (let i = 0; i < 12; i++) {
-                let dutyDaysInMonth = this.getDutyDaysInMonth(today.getFullYear(), today.getMonth(), conf);
+                let dutyDaysInMonth = this.getDaysInMonth(today.getFullYear(), today.getMonth(), arrScheduleConf);
                 dutyDaysForOneYear = (dutyDaysForOneYear.concat(dutyDaysInMonth));
                 // dutyDaysForOneYear.concat(dutyDaysInMonth);
                 // [...dutyDaysForOneYear, ...dutyDaysInMonth];
                 today.setMonth(today.getMonth() + 1);
             }
 
+            // 既に過ぎてしまった当番の日を除外する
             let today2 = new Date();
             let oneYearLater = new Date(today2);
             oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
@@ -260,15 +237,51 @@ const ManageApp = {
                     result.push(dutyDay);
                 }
             });
-
-            // for (let i = 0; i < result.length; i++) {
-            //     let person = this.members[i % this.members.length];
-            //     console.log(result[i], person);
-            // }
-
             // return dutyDaysForOneYear;
+            // return result;
+
+            // 表示形式を加工してdutyDaysに代入する
+            result.sort();
+            result.forEach((item) => {
+                let dutyDay = new Date(item);
+                let year = dutyDay.getFullYear();
+                let month = dutyDay.getMonth() + 1;
+                let date = dutyDay.getDate();
+                let weekday = this.getWeekdayString(dutyDay.getDay());
+                this.dutyDays.push(year + "年" + month + "月" + date + "日" + "(" + weekday + ")");
+            })
+        },
+        // ある月の指定した曜日の日にちのリストを返す
+        getDaysInMonth (year, month, arrScheduleConf) {
+            let result = [];
+            const firstDay = new Date(year, month, 1)
+            const distances = [];
+            arrScheduleConf.forEach((conf) => {
+                distances.push(this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord));
+            });
+            // console.log(distances);
+            distances.sort();
+            // console.log(distances);
+            distances.forEach((distance) => {
+                let firstDay2 = new Date(year, month, 1)
+                firstDay2.setDate(firstDay2.getDate() + distance);
+                if (firstDay2.getMonth() === month) {
+                    result.push(firstDay2.getTime());
+                }
+            });
             return result;
-        }
+        },
+        // ある月の初日から指定した曜日までの距離を返す
+        getDistanceFromFirstDayToWeekday (firstDayInMonth, weekday, ord) {
+            let weekdayOfFirstDay = firstDayInMonth.getDay();
+            let distanceToWeekday;
+            if (weekday >= weekdayOfFirstDay) {
+                distanceToWeekday = weekday - weekdayOfFirstDay; // 初日の曜日より後の曜日の場合
+            } else {
+                distanceToWeekday = weekday + (7 - weekdayOfFirstDay) // 初日の曜日より前の曜日の場合
+            }
+            return distanceToWeekday + (7 * (ord - 1));
+        },
     },
     components: {
         MembersEditForm,
@@ -278,31 +291,22 @@ const ManageApp = {
 
 window.onload = function () {
     const app = Vue.createApp(ManageApp);
-    // app.mount('#app');
-    const test = app.mount('#app');
+    app.mount('#app');
+    // const test = app.mount('#app');
 
 
 
-    // test.getDutyDaysInMonth(2023, 11, [{"id":1,"weekday":1,"ord":1},{"id":2,"weekday":1,"ord":2},{"id":3,"weekday":1,"ord":3},{"id":4,"weekday":1,"ord":4},{"id":5,"weekday":1,"ord":5},{"id":6,"weekday":5,"ord":1},{"id":7,"weekday":5,"ord":2},{"id":8,"weekday":5,"ord":3},{"id":9,"weekday":5,"ord":4},{"id":10,"weekday":5,"ord":5},{"id":11,"weekday":3,"ord":1}]);
+    // test.getDaysInMonth(2023, 11, [{"id":1,"weekday":1,"ord":1},{"id":2,"weekday":1,"ord":2},{"id":3,"weekday":1,"ord":3},{"id":4,"weekday":1,"ord":4},{"id":5,"weekday":1,"ord":5},{"id":6,"weekday":5,"ord":1},{"id":7,"weekday":5,"ord":2},{"id":8,"weekday":5,"ord":3},{"id":9,"weekday":5,"ord":4},{"id":10,"weekday":5,"ord":5},{"id":11,"weekday":3,"ord":1}]);
 
     // let conf = [
     //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
     //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
     // ];
 
-    // let days = test.getDutyDaysInMonth(2023, 12 - 1, conf);
+    // let days = test.getDaysInMonth(2023, 12 - 1, conf);
     // days.forEach((day) => {
     //     console.log(new Date(day));
     // })
 
-    // console.log(test.getDutyDaysInMonth(2023, 11, [{"id":1,"weekday":5,"ord":2},{"id":2,"weekday":3,"ord":1}]));
-
-    // console.log(test.getDutyDays());
-
-    let arrDutyDays = test.getDutyDays();
-    arrDutyDays.sort();
-    arrDutyDays.forEach((dutyDays) => {
-        let cal = new Date(dutyDays);
-        console.log(cal.getFullYear() + ", " + (cal.getMonth() + 1) + "月, " + cal.getDate() + "日, " + cal.getDay()); // 第2金曜日, 第1水曜日
-    });
+    // console.log(test.getDaysInMonth(2023, 11, [{"id":1,"weekday":5,"ord":2},{"id":2,"weekday":3,"ord":1}]));
 };
