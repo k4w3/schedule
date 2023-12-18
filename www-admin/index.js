@@ -145,26 +145,21 @@ const ScheduleConfEditForm = {
 const ManageApp = {
     data () {
         return {
+            members: [],
+            scheduleConfs: [],
+            dutyDays: [],
             // members: [
             //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
-            //     {id: 3, team: 2, name: "鈴木 三郎", ruby: "サブロウ"}
             // ],
-            members: [],
             // scheduleConfs: [
             //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
             //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
             // ],
-            scheduleConfs: [],
             // dutyDays: [
             //     "2024年5月1日",
             //     "2024年6月1日",
-            //     "2024年7月1日",
-            //     "2024年8月1日",
-            //     "2024年9月1日",
-            //     "2024年10月1日"
             // ],
-            dutyDays: [],
         };
     },
     async mounted () {
@@ -221,8 +216,6 @@ const ManageApp = {
             for (let i = 0; i < 13; i++) {
                 let dutyDaysInMonth = this.getDaysInMonth(today.getFullYear(), today.getMonth(), arrScheduleConf);
                 dutyDaysForOneYear = (dutyDaysForOneYear.concat(dutyDaysInMonth));
-                // dutyDaysForOneYear.concat(dutyDaysInMonth);
-                // [...dutyDaysForOneYear, ...dutyDaysInMonth];
                 today.setMonth(today.getMonth() + 1);
             }
 
@@ -238,8 +231,6 @@ const ManageApp = {
                     result.push(dutyDay);
                 }
             });
-            // return dutyDaysForOneYear;
-            // return result;
 
             // 表示形式を加工してdutyDaysに代入する
             result.sort();
@@ -260,9 +251,7 @@ const ManageApp = {
             arrScheduleConf.forEach((conf) => {
                 distances.push(this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord));
             });
-            // console.log(distances);
             distances.sort();
-            // console.log(distances);
             distances.forEach((distance) => {
                 let firstDay2 = new Date(year, month, 1)
                 firstDay2.setDate(firstDay2.getDate() + distance);
@@ -295,10 +284,6 @@ window.onload = function () {
     app.mount('#app');
     // const test = app.mount('#app');
 
-
-
-    // test.getDaysInMonth(2023, 11, [{"id":1,"weekday":1,"ord":1},{"id":2,"weekday":1,"ord":2},{"id":3,"weekday":1,"ord":3},{"id":4,"weekday":1,"ord":4},{"id":5,"weekday":1,"ord":5},{"id":6,"weekday":5,"ord":1},{"id":7,"weekday":5,"ord":2},{"id":8,"weekday":5,"ord":3},{"id":9,"weekday":5,"ord":4},{"id":10,"weekday":5,"ord":5},{"id":11,"weekday":3,"ord":1}]);
-
     // let conf = [
     //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
     //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
@@ -308,6 +293,4 @@ window.onload = function () {
     // days.forEach((day) => {
     //     console.log(new Date(day));
     // })
-
-    // console.log(test.getDaysInMonth(2023, 11, [{"id":1,"weekday":5,"ord":2},{"id":2,"weekday":3,"ord":1}]));
 };
