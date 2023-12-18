@@ -218,7 +218,7 @@ const ManageApp = {
             let today = new Date();
             let dutyDaysForOneYear = [];
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 13; i++) {
                 let dutyDaysInMonth = this.getDaysInMonth(today.getFullYear(), today.getMonth(), arrScheduleConf);
                 dutyDaysForOneYear = (dutyDaysForOneYear.concat(dutyDaysInMonth));
                 // dutyDaysForOneYear.concat(dutyDaysInMonth);
