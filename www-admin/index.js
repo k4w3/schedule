@@ -227,13 +227,14 @@ const ManageApp = {
             }
 
             // 既に過ぎてしまった当番の日を除外する
-            let today2 = new Date();
+            let tmp = new Date();
+            let today2 = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate()); // 00:00:00 で比較して今日が当番日の場合も含める
             let oneYearLater = new Date(today2);
             oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
 
             let result = [];
             dutyDaysForOneYear.forEach((dutyDay) => {
-                if (today2.getTime() < dutyDay && dutyDay < oneYearLater.getTime()) {
+                if (today2.getTime() <= dutyDay && dutyDay <= oneYearLater.getTime()) {
                     result.push(dutyDay);
                 }
             });
