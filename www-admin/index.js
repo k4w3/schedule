@@ -77,6 +77,7 @@ const ScheduleConfEditForm = {
         return {
             showModal: false,
             id: "0",
+            type: "",
             weekday: "",
             ord: "",
         };
@@ -85,12 +86,14 @@ const ScheduleConfEditForm = {
         open (item) {
             if (item) {
                 this.id = item.id;
+                this.type = item.type;
                 this.weekday = item.weekday;
                 this.ord = item.ord;
             } else {
                 this.id = "0";
-                this.weekday = "";
-                this.ord = "";
+                this.type = "1";
+                this.weekday = "0";
+                this.ord = "1";
             }
             this.showModal = true
             console.log(this.showModal);
@@ -102,9 +105,9 @@ const ScheduleConfEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id === "0") {
-                await addTScheduleConf(this.weekday, this.ord);
+                await addTScheduleConf(this.type, this.weekday, this.ord);
             } else {
-                await putTScheduleConf(this.weekday, this.ord, this.id);
+                await putTScheduleConf(this.type, this.weekday, this.ord, this.id);
             }
             this.showModal = false;
             this.$parent.reloadScheduleConf();
@@ -115,8 +118,14 @@ const ScheduleConfEditForm = {
   <div class="modal-content">
     <form>
         <div>
+            ゴミの種類:
+            <label><input type="radio" v-model="type" value="1">燃えるゴミ</label>
+            <label><input type="radio" v-model="type" value="2">燃えないゴミ</label>
+            <label><input type="radio" v-model="type" value="3">その他</label>
+        </div>
+        <div>
             曜日:
-            <label><input type="radio" v-model="weekday" value="0" checked>日</label>
+            <label><input type="radio" v-model="weekday" value="0">日</label>
             <label><input type="radio" v-model="weekday" value="1">月</label>
             <label><input type="radio" v-model="weekday" value="2">火</label>
             <label><input type="radio" v-model="weekday" value="3">水</label>
@@ -126,7 +135,7 @@ const ScheduleConfEditForm = {
         </div>
         <div>
             第:
-            <label><input type="radio" v-model="ord" value="1" checked>1</label>
+            <label><input type="radio" v-model="ord" value="1">1</label>
             <label><input type="radio" v-model="ord" value="2">2</label>
             <label><input type="radio" v-model="ord" value="3">3</label>
             <label><input type="radio" v-model="ord" value="4">4</label>
@@ -188,6 +197,18 @@ const ManageApp = {
                 this.reloadScheduleConf();
             };
         },
+        getTypeString (type) {
+            switch (type) {
+                case 1:
+                    return "燃えるゴミ";
+                case 2:
+                    return "燃えないゴミ";
+                case 3:
+                    return "その他";
+                default:
+                    return "不明";
+            }
+        },
         getWeekdayString (weekday) {
             switch (weekday) {
                 case 0:
@@ -226,21 +247,25 @@ const ManageApp = {
             oneYearLater.setFullYear(oneYearLater.getFullYear() + 1)
 
             let result = [];
-            dutyDaysForOneYear.forEach((dutyDay) => {
+            dutyDaysForOneYear.forEach((oDutyDay) => {
+                let dutyDay = oDutyDay.time;
                 if (today2.getTime() <= dutyDay && dutyDay <= oneYearLater.getTime()) {
-                    result.push(dutyDay);
+                    result.push(oDutyDay);
                 }
             });
 
             // 表示形式を加工してdutyDaysに代入する
             result.sort();
-            result.forEach((item) => {
+            result.forEach((oItem) => {
+                let typeString = this.getTypeString(oItem.type);
+                let item = oItem.time;
                 let dutyDay = new Date(item);
                 let year = dutyDay.getFullYear();
                 let month = dutyDay.getMonth() + 1;
                 let date = dutyDay.getDate();
                 let weekday = this.getWeekdayString(dutyDay.getDay());
-                this.dutyDays.push(year + "年" + month + "月" + date + "日" + "(" + weekday + ")");
+                let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
+                this.dutyDays.push({date: dutyDayString, type: typeString});
             })
         },
         // ある月の指定した曜日の日にちのリストを返す
@@ -249,14 +274,17 @@ const ManageApp = {
             const firstDay = new Date(year, month, 1)
             const distances = [];
             arrScheduleConf.forEach((conf) => {
-                distances.push(this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord));
+                let distance = this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord);
+                distances.push({distance: distance, type: conf.type});
             });
             distances.sort();
-            distances.forEach((distance) => {
+            distances.forEach((oDistance) => {
+                let distance = oDistance.distance;
+                let type = oDistance.type;
                 let firstDay2 = new Date(year, month, 1)
                 firstDay2.setDate(firstDay2.getDate() + distance);
                 if (firstDay2.getMonth() === month) {
-                    result.push(firstDay2.getTime());
+                    result.push({time: firstDay2.getTime(), type: type});
                 }
             });
             return result;

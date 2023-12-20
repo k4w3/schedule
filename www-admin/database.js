@@ -113,10 +113,11 @@ function getTScheduleConf(id) {
     });
 };
 
-function addTScheduleConf(weekday, ord) {
+function addTScheduleConf(type, weekday, ord) {
     return new Promise((resolve, reject) => {
 
-        let postData = "weekday=" + encodeURIComponent(weekday);
+        let postData = "type=" + encodeURIComponent(type);
+        postData += "&weekday=" + encodeURIComponent(weekday);
         postData += "&ord=" + encodeURIComponent(ord);
 
         let req = new XMLHttpRequest();
@@ -136,10 +137,11 @@ function addTScheduleConf(weekday, ord) {
     });
 };
 
-function putTScheduleConf(weekday, ord, id) {
+function putTScheduleConf(type, weekday, ord, id) {
     return new Promise((resolve, reject) => {
 
-        let putData = "weekday=" + encodeURIComponent(weekday);
+        let putData = "type=" + encodeURIComponent(type);
+        putData += "&weekday=" + encodeURIComponent(weekday);
         putData += "&ord=" + encodeURIComponent(ord);
 
         let req = new XMLHttpRequest();

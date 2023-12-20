@@ -6,8 +6,13 @@ CREATE TABLE IF NOT EXISTS TMembers (
   ord INTEGER
 );
 
+CREATE TABLE IF NOT EXISTS TFirstMember (
+  id INTEGER
+);
+
 CREATE TABLE IF NOT EXISTS TScheduleConf (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type INTEGER,
   weekday INTEGER,
   ord INTEGER
 );
@@ -18,17 +23,21 @@ insert into TMembers (team, name, ruby, ord) values(1, '佐藤次郎','サトウ
 insert into TMembers (team, name, ruby, ord) values(2, '鈴木三郎','スズキサブロウ', 3);
 insert into TMembers (team, name, ruby, ord) values(2, '高橋四郎','タカハシシロウ', 4);
 
-insert into TScheduleConf (weekday, ord) values(1, 1);
-insert into TScheduleConf (weekday, ord) values(1, 2);
-insert into TScheduleConf (weekday, ord) values(1, 3);
-insert into TScheduleConf (weekday, ord) values(1, 4);
-insert into TScheduleConf (weekday, ord) values(1, 5);
-insert into TScheduleConf (weekday, ord) values(5, 1);
-insert into TScheduleConf (weekday, ord) values(5, 2);
-insert into TScheduleConf (weekday, ord) values(5, 3);
-insert into TScheduleConf (weekday, ord) values(5, 4);
-insert into TScheduleConf (weekday, ord) values(5, 5);
-insert into TScheduleConf (weekday, ord) values(3, 1);
+insert into TScheduleConf (type, weekday, ord) values(1, 1, 1);
+insert into TScheduleConf (type, weekday, ord) values(1, 1, 2);
+insert into TScheduleConf (type, weekday, ord) values(1, 1, 3);
+insert into TScheduleConf (type, weekday, ord) values(1, 1, 4);
+insert into TScheduleConf (type, weekday, ord) values(1, 1, 5);
+insert into TScheduleConf (type, weekday, ord) values(2, 5, 1);
+insert into TScheduleConf (type, weekday, ord) values(2, 5, 2);
+insert into TScheduleConf (type, weekday, ord) values(2, 5, 3);
+insert into TScheduleConf (type, weekday, ord) values(2, 5, 4);
+insert into TScheduleConf (type, weekday, ord) values(2, 5, 5);
+insert into TScheduleConf (type, weekday, ord) values(3, 3, 1);
+
+-- 1 燃える
+-- 2 燃えない
+-- 3 空き缶、瓶、ペットボトル
 
 -- 0 日曜日
 -- 1 月曜日

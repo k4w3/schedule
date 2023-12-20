@@ -55,6 +55,7 @@
     <table border="1" v-if="scheduleConfs.length > 0">
         <thead>
         <tr>
+            <th>ゴミの種類</th>
             <th>曜日</th>
             <th>第</th>
             <th></th>
@@ -63,6 +64,7 @@
         </thead>
         <tbody>
         <tr v-for="item in scheduleConfs">
+            <td>{{getTypeString(item.type)}}</td>
             <td>{{getWeekdayString(item.weekday)}}</td>
             <td>{{item.ord}}</td>
             <td><button type="button" v-on:click="$refs.scheduleConfEditForm.open(item)">編集</button></td>
@@ -78,13 +80,15 @@
         <thead>
         <tr>
             <th>当番日</th>
+            <th>ゴミの種類</th>
             <th>班</th>
             <th>名前</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="(dutyDay, index) in dutyDays">
-            <td>{{dutyDay}}</td>
+            <td>{{dutyDay.date}}</td>
+            <td>{{dutyDay.type}}</td>
             <td>{{members[index % members.length].team}}</td>
             <td>{{members[index % members.length].name}}</td>
         </tr>
