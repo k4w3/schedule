@@ -7,6 +7,15 @@ console.log("start");
 
 const router = new Router();
 
+router.get("/api/TMembers/firstMember", (context) => {
+    console.log("GET /api/TMembers/firstMember");
+    const db = new DB("schedule.db");
+    let res = db.queryEntries("SELECT id, team, name, ruby, ord FROM TFistMember ORDER BY ord");
+
+    db.close();
+    context.response.body = res;
+});
+
 router.get("/api/TMembers", (context) => {
     console.log("GET /api/TMembers");
     const db = new DB("schedule.db");
