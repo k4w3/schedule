@@ -10,9 +10,29 @@ const router = new Router();
 router.get("/api/TMembers/firstMember", (context) => {
     console.log("GET /api/TMembers/firstMember");
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, team, name, ruby, ord FROM TFistMember ORDER BY ord");
+    let res = db.queryEntries("SELECT id FROM TFirstMember");
+    let members = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord");
+
+    if (res.length) {
+        let firstMember = res[0].id;
+        for (let i = 0; i < members.length; i++) {
+            // console.log("firstMember:", firstMember);
+            // console.log("members[i].id:", members[i].id);
+            if (firstMember === members[i].id) {
+                res = members[i].id;
+                break;
+            } else {
+                let member = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+                res = member[0].id
+            }
+        }
+    } else {
+        let member = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+        res = member[0].id
+    }
 
     db.close();
+    // console.log(res);
     context.response.body = res;
 });
 
