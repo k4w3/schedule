@@ -79,7 +79,7 @@ const ScheduleConfEditForm = {
             id: "0",
             type: "",
             weekday: "",
-            ord: "",
+            weekord: "",
         };
     },
     methods: {
@@ -88,12 +88,12 @@ const ScheduleConfEditForm = {
                 this.id = item.id;
                 this.type = item.type;
                 this.weekday = item.weekday;
-                this.ord = item.ord;
+                this.weekord = item.weekord;
             } else {
                 this.id = "0";
                 this.type = "1";
                 this.weekday = "0";
-                this.ord = "1";
+                this.weekord = "1";
             }
             this.showModal = true
             console.log(this.showModal);
@@ -105,9 +105,9 @@ const ScheduleConfEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id === "0") {
-                await addTScheduleConf(this.type, this.weekday, this.ord);
+                await addTScheduleConf(this.type, this.weekday, this.weekord);
             } else {
-                await putTScheduleConf(this.type, this.weekday, this.ord, this.id);
+                await putTScheduleConf(this.type, this.weekday, this.weekord, this.id);
             }
             this.showModal = false;
             this.$parent.reloadScheduleConf();
@@ -135,11 +135,11 @@ const ScheduleConfEditForm = {
         </div>
         <div>
             第:
-            <label><input type="radio" v-model="ord" value="1">1</label>
-            <label><input type="radio" v-model="ord" value="2">2</label>
-            <label><input type="radio" v-model="ord" value="3">3</label>
-            <label><input type="radio" v-model="ord" value="4">4</label>
-            <label><input type="radio" v-model="ord" value="5">5</label>
+            <label><input type="radio" v-model="weekord" value="1">1</label>
+            <label><input type="radio" v-model="weekord" value="2">2</label>
+            <label><input type="radio" v-model="weekord" value="3">3</label>
+            <label><input type="radio" v-model="weekord" value="4">4</label>
+            <label><input type="radio" v-model="weekord" value="5">5</label>
         </div>
         <div>
             <button type="button" v-on:click="submit">送信</button>
@@ -162,8 +162,8 @@ const ManageApp = {
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
             // ],
             // scheduleConfs: [
-            //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
-            //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
+            //     {"id":1,"weekday":5,"weekord":2}, // 第2金曜日
+            //     {"id":2,"weekday":3,"weekord":1} // 第1水曜日
             // ],
             // dutyDays: [
             //     "2024年5月1日",
@@ -274,7 +274,7 @@ const ManageApp = {
             const firstDay = new Date(year, month, 1)
             const distances = [];
             arrScheduleConf.forEach((conf) => {
-                let distance = this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.ord);
+                let distance = this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.weekord);
                 distances.push({distance: distance, type: conf.type});
             });
             distances.sort();
@@ -290,7 +290,7 @@ const ManageApp = {
             return result;
         },
         // ある月の初日から指定した曜日までの距離を返す
-        getDistanceFromFirstDayToWeekday (firstDayInMonth, weekday, ord) {
+        getDistanceFromFirstDayToWeekday (firstDayInMonth, weekday, weekord) {
             let weekdayOfFirstDay = firstDayInMonth.getDay();
             let distanceToWeekday;
             if (weekday >= weekdayOfFirstDay) {
@@ -298,7 +298,7 @@ const ManageApp = {
             } else {
                 distanceToWeekday = weekday + (7 - weekdayOfFirstDay) // 初日の曜日より前の曜日の場合
             }
-            return distanceToWeekday + (7 * (ord - 1));
+            return distanceToWeekday + (7 * (weekord - 1));
         },
     },
     components: {
@@ -313,8 +313,8 @@ window.onload = function () {
     // const test = app.mount('#app');
 
     // let conf = [
-    //     {"id":1,"weekday":5,"ord":2}, // 第2金曜日
-    //     {"id":2,"weekday":3,"ord":1} // 第1水曜日
+    //     {"id":1,"weekday":5,"weekord":2}, // 第2金曜日
+    //     {"id":2,"weekday":3,"weekord":1} // 第1水曜日
     // ];
 
     // let days = test.getDaysInMonth(2023, 12 - 1, conf);
