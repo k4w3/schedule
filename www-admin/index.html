@@ -76,7 +76,13 @@
 
     <div>
     <h2 style="border-bottom: 1px solid">当番表</h2>
-    <table border="1" v-if="members.length > 0">
+
+    <div style="display: flex;">
+        <div>先頭メンバー > {{firstMember.name}}</div>
+        <button type="button">編集</button>
+    </div>
+
+    <table border="1" v-if="sortedMembers.length > 0">
         <thead>
         <tr>
             <th>当番日</th>
@@ -89,8 +95,8 @@
         <tr v-for="(dutyDay, index) in dutyDays">
             <td>{{dutyDay.date}}</td>
             <td>{{dutyDay.type}}</td>
-            <td>{{members[index % members.length].team}}</td>
-            <td>{{members[index % members.length].name}}</td>
+            <td>{{sortedMembers[index % sortedMembers.length].team}}</td>
+            <td>{{sortedMembers[index % sortedMembers.length].name}}</td>
         </tr>
         </tbody>
     </table>

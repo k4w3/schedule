@@ -1,3 +1,14 @@
+function getTFirstMember() {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.open("GET", "/api/TMembers/firstMember");
+        req.onload = (event) => {
+            resolve(req.responseText);
+        };
+        req.send();
+    });
+};
+
 function selectTMembers() {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();

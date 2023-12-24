@@ -19,16 +19,16 @@ router.get("/api/TMembers/firstMember", (context) => {
             // console.log("firstMember:", firstMember);
             // console.log("members[i].id:", members[i].id);
             if (firstMember === members[i].id) {
-                res = members[i].id;
+                res = members[i];
                 break;
             } else {
                 let member = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-                res = member[0].id
+                res = member[0]
             }
         }
     } else {
         let member = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-        res = member[0].id
+        res = member[0]
     }
 
     db.close();

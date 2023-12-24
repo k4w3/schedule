@@ -155,6 +155,8 @@ const ManageApp = {
     data () {
         return {
             members: [],
+            firstMember: {},
+            sortedMembers: [],
             scheduleConfs: [],
             dutyDays: [],
             // members: [
@@ -175,6 +177,8 @@ const ManageApp = {
         this.reloadMembers();
         await this.reloadScheduleConf();
         this.reloadDutyDays(this.scheduleConfs);
+        await this.reloadFirstMember();
+        await this.sortMembers(this.members, this.firstMember);
     },
     methods: {
         async reloadMembers () {
@@ -228,6 +232,26 @@ const ManageApp = {
                 default:
                     return "不明";
             }
+        },
+        async reloadFirstMember () {
+            this.firstMember = JSON.parse(await getTFirstMember());
+        },
+        async sortMembers (members, firstMember) {
+            // const index = members.findIndex((member) => {
+            //     member.id === Number(firstMember.id);
+            // });
+
+            let index;
+            for (let i = 0; i < members.length; i++) {
+                if (members[i].id === firstMember.id) {
+                    index = i;
+                }
+            }
+            // console.log(index);
+
+            let result = members.slice(index).concat(members.slice(0, index));
+            // return result;
+            this.sortedMembers = result;
         },
         // 現在から1年分の当番の日を計算する
         reloadDutyDays (arrScheduleConf) {
