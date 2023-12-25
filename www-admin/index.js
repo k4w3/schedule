@@ -238,7 +238,7 @@ const ManageApp = {
         },
         async sortMembers (members, firstMember) {
             // const index = members.findIndex((member) => {
-            //     member.id === Number(firstMember.id);
+            //     return (member.id === Number(firstMember.id));
             // });
 
             let index;
