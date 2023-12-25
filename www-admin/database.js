@@ -9,6 +9,28 @@ function getTFirstMember() {
     });
 };
 
+function putTFirstMember(id) {
+    return new Promise((resolve, reject) => {
+
+        let putData = "id=" + encodeURIComponent(id);
+
+        let req = new XMLHttpRequest();
+        req.open("PUT", "/api/TMembers/firstMember");
+        req.onload = (event) => {
+            if (req.readyState === req.DONE) {
+                if (req.status === 200) {
+                    resolve(req.responseText);
+                } else {
+                    reject(req.responseText);
+                }
+            }
+        };
+
+        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        req.send(putData);
+    });
+};
+
 function selectTMembers() {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();

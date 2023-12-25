@@ -95,7 +95,7 @@ const ScheduleConfEditForm = {
                 this.weekday = "0";
                 this.weekord = "1";
             }
-            this.showModal = true
+            this.showModal = true;
             console.log(this.showModal);
         },
         close (event) {
@@ -151,6 +151,56 @@ const ScheduleConfEditForm = {
 `
 };
 
+const FirstMemberEditForm = {
+    data () {
+        return {
+            showModal: false,
+            id: "0",
+            name: "選択してください",
+        };
+    },
+    methods: {
+        open (item) {
+            if (item) {
+                this.id = item.id;
+                this.name = item.name;
+            }
+            this.showModal = true;
+            console.log(this.showModal);
+        },
+        close (event) {
+            event.preventDefault();
+            this.showModal = false;
+        },
+        async submit (event) {
+            event.preventDefault();
+            if (this.id !== "0") {
+                await putTFirstMember(this.id);
+            }
+            this.showModal = false;
+            await this.$parent.reloadFirstMember();
+            this.$parent.sortMembers(this.$parent.members, this.$parent.firstMember);
+        },
+    },
+    template: `
+<div class="modal-overlay" v-show="showModal">
+  <div class="modal-content">
+    <form>
+        <select v-model="id">
+            <option v-for="member in this.$parent.members" :value="member.id">
+                {{member.name}}
+            </option>
+        </select>
+        <div>
+            <button type="button" v-on:click="submit">送信</button>
+            <button type="button" v-on:click="close">キャンセル</button>
+        </div>
+    </form>
+  </div>
+</div>
+`
+}
+
 const ManageApp = {
     data () {
         return {
@@ -178,7 +228,7 @@ const ManageApp = {
         await this.reloadScheduleConf();
         this.reloadDutyDays(this.scheduleConfs);
         await this.reloadFirstMember();
-        await this.sortMembers(this.members, this.firstMember);
+        this.sortMembers(this.members, this.firstMember);
     },
     methods: {
         async reloadMembers () {
@@ -328,6 +378,7 @@ const ManageApp = {
     components: {
         MembersEditForm,
         ScheduleConfEditForm,
+        FirstMemberEditForm,
     },
 };
 

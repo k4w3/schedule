@@ -36,6 +36,18 @@ router.get("/api/TMembers/firstMember", (context) => {
     context.response.body = res;
 });
 
+router.put("/api/TMembers/firstMember", async (context) => {
+    console.log("put /api/TMembers/firstMember");
+    const postParams = await context.request.body({type:"form"}).value;
+    console.log(postParams);
+
+    const db = new DB("schedule.db");
+    db.query("UPDATE TFirstMember SET id=?",
+    [postParams.get("id")]);
+    db.close();
+    context.response.body = "OK";
+});
+
 router.get("/api/TMembers", (context) => {
     console.log("GET /api/TMembers");
     const db = new DB("schedule.db");

@@ -79,7 +79,7 @@
 
     <div style="display: flex;">
         <div>先頭メンバー > {{firstMember.name}}</div>
-        <button type="button">編集</button>
+        <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">編集</button>
     </div>
 
     <table border="1" v-if="sortedMembers.length > 0">
@@ -104,5 +104,6 @@
 
     <members-edit-form ref="membersEditForm"></members-edit-form>
     <schedule-conf-edit-form ref="scheduleConfEditForm"></schedule-conf-edit-form>
+    <first-member-edit-form ref="firstMemberEditForm"></first-member-edit-form>
 </body>
 </html>
