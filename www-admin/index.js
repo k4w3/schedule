@@ -156,14 +156,15 @@ const FirstMemberEditForm = {
         return {
             showModal: false,
             id: "0",
-            name: "選択してください",
+            // name: "選択してください",
         };
     },
     methods: {
-        open (item) {
+        open (itemX) {
+            let item = itemX.calcMember;
             if (item) {
-                this.id = item.id;
-                this.name = item.name;
+                this.id = itemX.confMemberId;
+                // this.name = item.name;
             }
             this.showModal = true;
             console.log(this.showModal);
@@ -175,11 +176,15 @@ const FirstMemberEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id !== "0") {
+                console.log("0じゃない");
                 await putTFirstMember(this.id);
+            } else {
+                console.log("0です");
+                await deleteTFirstMember();
             }
             this.showModal = false;
             await this.$parent.reloadFirstMember();
-            this.$parent.sortMembers(this.$parent.members, this.$parent.firstMember);
+            this.$parent.sortMembers(this.$parent.members, this.$parent.firstMember.calcMember);
         },
     },
     template: `
@@ -187,6 +192,7 @@ const FirstMemberEditForm = {
   <div class="modal-content">
     <form>
         <select v-model="id">
+            <option value="0">なし</option>
             <option v-for="member in this.$parent.members" :value="member.id">
                 {{member.name}}
             </option>
@@ -205,7 +211,7 @@ const ManageApp = {
     data () {
         return {
             members: [],
-            firstMember: {},
+            firstMember: null,
             sortedMembers: [],
             scheduleConfs: [],
             dutyDays: [],
@@ -228,7 +234,7 @@ const ManageApp = {
         await this.reloadScheduleConf();
         this.reloadDutyDays(this.scheduleConfs);
         await this.reloadFirstMember();
-        this.sortMembers(this.members, this.firstMember);
+        this.sortMembers(this.members, this.firstMember.calcMember);
     },
     methods: {
         async reloadMembers () {
@@ -284,7 +290,10 @@ const ManageApp = {
             }
         },
         async reloadFirstMember () {
+            // let foo = JSON.parse(await getTFirstMember());
             this.firstMember = JSON.parse(await getTFirstMember());
+            console.log(this.firstMember);
+            // console.log(foo);
         },
         async sortMembers (members, firstMember) {
             // const index = members.findIndex((member) => {

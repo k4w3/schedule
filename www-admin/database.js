@@ -11,6 +11,7 @@ function getTFirstMember() {
 
 function putTFirstMember(id) {
     return new Promise((resolve, reject) => {
+        console.log("put");
 
         let putData = "id=" + encodeURIComponent(id);
 
@@ -28,6 +29,25 @@ function putTFirstMember(id) {
 
         req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         req.send(putData);
+    });
+};
+
+function deleteTFirstMember() {
+    return new Promise((resolve, reject) => {
+
+        let req = new XMLHttpRequest();
+        req.open("DELETE", "/api/TMembers/firstMember");
+        req.onload = (event) => {
+            if (req.readyState === req.DONE) {
+                if (req.status === 200) {
+                    resolve(req.responseText);
+                } else {
+                    reject(req.responseText);
+                }
+            }
+        };
+
+        req.send();
     });
 };
 

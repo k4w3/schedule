@@ -7,28 +7,63 @@ console.log("start");
 
 const router = new Router();
 
+// router.get("/api/TMembers/firstMember", (context) => {
+//     console.log("GET /api/TMembers/firstMember");
+//     const db = new DB("schedule.db");
+//     let confFirstMemberIds = db.queryEntries("SELECT id FROM TFirstMember");
+//     console.log(confFirstMemberIds);
+
+//     let res;
+//     if (confFirstMemberIds.length) {
+//         let confFirstMemberId = confFirstMemberIds[0].id;
+//         let confFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [confFirstMemberId]);
+//         if (confFirstMembers.length) {
+//             res = confFirstMembers[0];
+//         } else {
+//             let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+//             res = calcFirstMembers[0]
+//         }
+//     } else {
+//         let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+//         res = calcFirstMembers[0]
+//     }
+
+//     db.close();
+//     // console.log(res);
+//     context.response.body = res;
+// });
+
 router.get("/api/TMembers/firstMember", (context) => {
     console.log("GET /api/TMembers/firstMember");
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id FROM TFirstMember");
-    let members = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord");
+    let confFirstMemberIds = db.queryEntries("SELECT id FROM TFirstMember");
+    console.log(confFirstMemberIds);
 
-    if (res.length) {
-        let firstMember = res[0].id;
-        for (let i = 0; i < members.length; i++) {
-            // console.log("firstMember:", firstMember);
-            // console.log("members[i].id:", members[i].id);
-            if (firstMember === members[i].id) {
-                res = members[i];
-                break;
-            } else {
-                let member = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-                res = member[0]
+    let res;
+    if (confFirstMemberIds.length) {
+        let confFirstMemberId = confFirstMemberIds[0].id;
+        let confFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [confFirstMemberId]);
+        if (confFirstMembers.length) {
+            // res = confFirstMembers[0];
+            res = {
+                confMemberId: confFirstMembers[0].id,
+                calcMember: confFirstMembers[0]
+            }
+        } else {
+            let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+            // res = calcFirstMembers[0]
+            res = {
+                confMemberId: confFirstMemberIds[0].id,
+                calcMember: calcFirstMembers[0]
             }
         }
     } else {
-        let member = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-        res = member[0]
+        let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+        // res = calcFirstMembers[0]
+        res = {
+            confMemberId: 0,
+            calcMember: calcFirstMembers[0]
+        }
     }
 
     db.close();
@@ -42,8 +77,17 @@ router.put("/api/TMembers/firstMember", async (context) => {
     console.log(postParams);
 
     const db = new DB("schedule.db");
-    db.query("UPDATE TFirstMember SET id=?",
-    [postParams.get("id")]);
+    db.query("DELETE FROM TFirstMember");
+    db.query("INSERT INTO TFirstMember (id) VALUES(?)",[postParams.get("id")]);
+    db.close();
+    context.response.body = "OK";
+});
+
+router.delete("/api/TMembers/firstMember", async (context) => {
+    console.log("delete /api/TMembers/firstMember");
+
+    const db = new DB("schedule.db");
+    db.query("DELETE FROM TFirstMember");
     db.close();
     context.response.body = "OK";
 });
