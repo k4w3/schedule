@@ -221,6 +221,69 @@ router.delete("/api/TScheduleConf/:id", async (context) => {
 });
 
 
+
+router.get("/api/TDateConf", (context) => {
+    console.log("GET /api/TScheduleConf");
+    const db = new DB("schedule.db");
+    let res = db.queryEntries("SELECT id, date, diff_type, trash_type FROM TDateConf ORDER BY id");
+
+    db.close();
+    context.response.body = res;
+});
+
+router.get("/api/TDateConf/:id", (context) => {
+    console.log("GET /api/TDateConf:id");
+    const queryParams = getQuery(context, { mergeParams: true });
+    console.log(queryParams);
+
+    const db = new DB("schedule.db");
+    let res = db.queryEntries("SELECT id, date, diff_type, trash_type FROM TDateConf WHERE id=?", [queryParams.id]);
+    db.close();
+    if (res.length > 0) {
+        context.response.body = res[0];
+    } else {
+        context.response.headers.set("content-type", "application/json; charset=UTF-8");
+        context.response.body = "null";
+    }
+});
+
+router.post("/api/TDateConf", async (context) => {
+    console.log("POST /api/TDateConf");
+    const params = await context.request.body({type:"form"}).value;
+
+    const db = new DB("schedule.db");
+    db.query("INSERT INTO TDateConf (date, diff_type, trash_type) VALUES (?,?,?)",
+    [params.get("date"), params.get("diff_type"), params.get("trash_type")]);
+    db.close();
+    context.response.body = "OK";
+});
+
+router.put("/api/TDateConf/:id", async (context) => {
+    console.log("put /api/TDateConf");
+    const queryParams = getQuery(context, { mergeParams: true });
+    const postParams = await context.request.body({type:"form"}).value;
+    console.log(queryParams);
+    console.log(postParams);
+
+    const db = new DB("schedule.db");
+    db.query("UPDATE TDateConf SET date=?, diff_type=?, trash_type=? WHERE id=?",
+    [postParams.get("date"), postParams.get("diff_type"), postParams.get("trash_type"), queryParams.id]);
+    db.close();
+    context.response.body = "OK";
+});
+
+router.delete("/api/TDateConf/:id", async (context) => {
+    console.log("delete /api/TDateConf");
+    const queryParams = getQuery(context, { mergeParams: true });
+    console.log(queryParams);
+
+    const db = new DB("schedule.db");
+    db.query("DELETE FROM TDateConf WHERE id=?",
+    [queryParams.id]);
+    db.close();
+    context.response.body = "OK";
+});
+
 const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
