@@ -77,7 +77,7 @@ const ScheduleConfEditForm = {
         return {
             showModal: false,
             id: "0",
-            type: "",
+            trashType: "",
             weekday: "",
             weekord: "",
         };
@@ -86,12 +86,12 @@ const ScheduleConfEditForm = {
         open (item) {
             if (item) {
                 this.id = item.id;
-                this.type = item.type;
+                this.trashType = item.trashType;
                 this.weekday = item.weekday;
                 this.weekord = item.weekord;
             } else {
                 this.id = "0";
-                this.type = "1";
+                this.trashType = "1";
                 this.weekday = "0";
                 this.weekord = "1";
             }
@@ -105,9 +105,9 @@ const ScheduleConfEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id === "0") {
-                await addTScheduleConf(this.type, this.weekday, this.weekord);
+                await addTScheduleConf(this.trashType, this.weekday, this.weekord);
             } else {
-                await putTScheduleConf(this.type, this.weekday, this.weekord, this.id);
+                await putTScheduleConf(this.trashType, this.weekday, this.weekord, this.id);
             }
             this.showModal = false;
             this.$parent.reloadScheduleConf();
@@ -119,9 +119,9 @@ const ScheduleConfEditForm = {
     <form>
         <div>
             ゴミの種類:
-            <label><input type="radio" v-model="type" value="1">燃えるゴミ</label>
-            <label><input type="radio" v-model="type" value="2">燃えないゴミ</label>
-            <label><input type="radio" v-model="type" value="3">その他</label>
+            <label><input type="radio" v-model="trashType" value="1">燃えるゴミ</label>
+            <label><input type="radio" v-model="trashType" value="2">燃えないゴミ</label>
+            <label><input type="radio" v-model="trashType" value="3">その他</label>
         </div>
         <div>
             曜日:
@@ -257,8 +257,8 @@ const ManageApp = {
                 this.reloadScheduleConf();
             };
         },
-        getTypeString (type) {
-            switch (type) {
+        getTrashTypeString (trashType) {
+            switch (trashType) {
                 case 1:
                     return "燃えるゴミ";
                 case 2:
@@ -290,10 +290,7 @@ const ManageApp = {
             }
         },
         async reloadFirstMember () {
-            // let foo = JSON.parse(await getTFirstMember());
             this.firstMember = JSON.parse(await getTFirstMember());
-            console.log(this.firstMember);
-            // console.log(foo);
         },
         async sortMembers (members, firstMember) {
             // const index = members.findIndex((member) => {
@@ -340,7 +337,7 @@ const ManageApp = {
             // 表示形式を加工してdutyDaysに代入する
             result.sort();
             result.forEach((oItem) => {
-                let typeString = this.getTypeString(oItem.type);
+                let trashTypeString = this.getTrashTypeString(oItem.trashType);
                 let item = oItem.time;
                 let dutyDay = new Date(item);
                 let year = dutyDay.getFullYear();
@@ -348,7 +345,7 @@ const ManageApp = {
                 let date = dutyDay.getDate();
                 let weekday = this.getWeekdayString(dutyDay.getDay());
                 let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
-                this.dutyDays.push({date: dutyDayString, type: typeString});
+                this.dutyDays.push({date: dutyDayString, trashType: trashTypeString});
             })
         },
         // ある月の指定した曜日の日にちのリストを返す
@@ -358,16 +355,16 @@ const ManageApp = {
             const distances = [];
             arrScheduleConf.forEach((conf) => {
                 let distance = this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.weekord);
-                distances.push({distance: distance, type: conf.type});
+                distances.push({distance: distance, trashType: conf.trashType});
             });
             distances.sort();
             distances.forEach((oDistance) => {
                 let distance = oDistance.distance;
-                let type = oDistance.type;
+                let trashType = oDistance.trashType;
                 let firstDay2 = new Date(year, month, 1)
                 firstDay2.setDate(firstDay2.getDate() + distance);
                 if (firstDay2.getMonth() === month) {
-                    result.push({time: firstDay2.getTime(), type: type});
+                    result.push({time: firstDay2.getTime(), trashType: trashType});
                 }
             });
             return result;

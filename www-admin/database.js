@@ -166,10 +166,10 @@ function getTScheduleConf(id) {
     });
 };
 
-function addTScheduleConf(type, weekday, weekord) {
+function addTScheduleConf(trashType, weekday, weekord) {
     return new Promise((resolve, reject) => {
 
-        let postData = "type=" + encodeURIComponent(type);
+        let postData = "trashType=" + encodeURIComponent(trashType);
         postData += "&weekday=" + encodeURIComponent(weekday);
         postData += "&weekord=" + encodeURIComponent(weekord);
 
@@ -190,10 +190,10 @@ function addTScheduleConf(type, weekday, weekord) {
     });
 };
 
-function putTScheduleConf(type, weekday, weekord, id) {
+function putTScheduleConf(trashType, weekday, weekord, id) {
     return new Promise((resolve, reject) => {
 
-        let putData = "type=" + encodeURIComponent(type);
+        let putData = "trashType=" + encodeURIComponent(trashType);
         putData += "&weekday=" + encodeURIComponent(weekday);
         putData += "&weekord=" + encodeURIComponent(weekord);
 
@@ -257,12 +257,12 @@ function getTDateConf(id) {
     });
 };
 
-function addTDateConf(type, weekday, weekord) {
+function addTDateConf(date, diffType, trashType) {
     return new Promise((resolve, reject) => {
 
         let postData = "type=" + encodeURIComponent(type);
-        postData += "&weekday=" + encodeURIComponent(weekday);
-        postData += "&weekord=" + encodeURIComponent(weekord);
+        postData += "&diffType=" + encodeURIComponent(diffType);
+        postData += "&trashType=" + encodeURIComponent(trashType);
 
         let req = new XMLHttpRequest();
         req.open("POST", "/api/TDateConf");
@@ -281,12 +281,12 @@ function addTDateConf(type, weekday, weekord) {
     });
 };
 
-function putTDateConf(type, weekday, weekord, id) {
+function putTDateConf(date, diffType, trashType, id) {
     return new Promise((resolve, reject) => {
 
         let putData = "type=" + encodeURIComponent(type);
-        putData += "&weekday=" + encodeURIComponent(weekday);
-        putData += "&weekord=" + encodeURIComponent(weekord);
+        putData += "&diffType=" + encodeURIComponent(diffType);
+        putData += "&trashType=" + encodeURIComponent(trashType);
 
         let req = new XMLHttpRequest();
         req.open("PUT", "/api/TDateConf/" + id);

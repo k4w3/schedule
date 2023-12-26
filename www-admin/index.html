@@ -64,7 +64,7 @@
         </thead>
         <tbody>
         <tr v-for="item in scheduleConfs">
-            <td>{{getTypeString(item.type)}}</td>
+            <td>{{getTrashTypeString(item.trashType)}}</td>
             <td>{{getWeekdayString(item.weekday)}}</td>
             <td>{{item.weekord}}</td>
             <td><button type="button" v-on:click="$refs.scheduleConfEditForm.open(item)">編集</button></td>
@@ -94,7 +94,7 @@
         <tbody>
         <tr v-for="(dutyDay, index) in dutyDays">
             <td>{{dutyDay.date}}</td>
-            <td>{{dutyDay.type}}</td>
+            <td>{{dutyDay.trashType}}</td>
             <td>{{sortedMembers[index % sortedMembers.length].team}}</td>
             <td>{{sortedMembers[index % sortedMembers.length].name}}</td>
         </tr>

@@ -161,7 +161,7 @@ router.get("/api/TScheduleConf", (context) => {
     console.log("GET /api/TScheduleConf");
     const db = new DB("schedule.db");
     // let res = db.query("SELECT * FROM TScheduleConf");
-    let res = db.queryEntries("SELECT id, type, weekday, weekord FROM TScheduleConf ORDER BY id");
+    let res = db.queryEntries("SELECT id, trashType, weekday, weekord FROM TScheduleConf ORDER BY id");
 
     db.close();
     context.response.body = res;
@@ -173,7 +173,7 @@ router.get("/api/TScheduleConf/:id", (context) => {
     console.log(queryParams);
 
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, type, weekday, weekord FROM TScheduleConf WHERE id=?", [queryParams.id]);
+    let res = db.queryEntries("SELECT id, trashType, weekday, weekord FROM TScheduleConf WHERE id=?", [queryParams.id]);
     db.close();
     if (res.length > 0) {
         context.response.body = res[0];
@@ -188,7 +188,7 @@ router.post("/api/TScheduleConf", async (context) => {
     const params = await context.request.body({type:"form"}).value;
 
     const db = new DB("schedule.db");
-    db.query("INSERT INTO TScheduleConf (type, weekday, weekord) VALUES (?,?,?)",
+    db.query("INSERT INTO TScheduleConf (trashType, weekday, weekord) VALUES (?,?,?)",
     [params.get("type"), params.get("weekday"), params.get("weekord")]);
     db.close();
     context.response.body = "OK";
@@ -202,8 +202,8 @@ router.put("/api/TScheduleConf/:id", async (context) => {
     console.log(postParams);
 
     const db = new DB("schedule.db");
-    db.query("UPDATE TScheduleConf SET type=?, weekday=?, weekord=? WHERE id=?",
-    [postParams.get("type"), postParams.get("weekday"), postParams.get("weekord"), queryParams.id]);
+    db.query("UPDATE TScheduleConf SET trashType=?, weekday=?, weekord=? WHERE id=?",
+    [postParams.get("trashType"), postParams.get("weekday"), postParams.get("weekord"), queryParams.id]);
     db.close();
     context.response.body = "OK";
 });
@@ -225,7 +225,7 @@ router.delete("/api/TScheduleConf/:id", async (context) => {
 router.get("/api/TDateConf", (context) => {
     console.log("GET /api/TScheduleConf");
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, date, diff_type, trash_type FROM TDateConf ORDER BY id");
+    let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDateConf ORDER BY id");
 
     db.close();
     context.response.body = res;
@@ -237,7 +237,7 @@ router.get("/api/TDateConf/:id", (context) => {
     console.log(queryParams);
 
     const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, date, diff_type, trash_type FROM TDateConf WHERE id=?", [queryParams.id]);
+    let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDateConf WHERE id=?", [queryParams.id]);
     db.close();
     if (res.length > 0) {
         context.response.body = res[0];
@@ -252,8 +252,8 @@ router.post("/api/TDateConf", async (context) => {
     const params = await context.request.body({type:"form"}).value;
 
     const db = new DB("schedule.db");
-    db.query("INSERT INTO TDateConf (date, diff_type, trash_type) VALUES (?,?,?)",
-    [params.get("date"), params.get("diff_type"), params.get("trash_type")]);
+    db.query("INSERT INTO TDateConf (date, diffType, trashType) VALUES (?,?,?)",
+    [params.get("date"), params.get("diffType"), params.get("trashType")]);
     db.close();
     context.response.body = "OK";
 });
@@ -266,8 +266,8 @@ router.put("/api/TDateConf/:id", async (context) => {
     console.log(postParams);
 
     const db = new DB("schedule.db");
-    db.query("UPDATE TDateConf SET date=?, diff_type=?, trash_type=? WHERE id=?",
-    [postParams.get("date"), postParams.get("diff_type"), postParams.get("trash_type"), queryParams.id]);
+    db.query("UPDATE TDateConf SET date=?, diffType=?, trashType=? WHERE id=?",
+    [postParams.get("date"), postParams.get("diffType"), postParams.get("trashType"), queryParams.id]);
     db.close();
     context.response.body = "OK";
 });
