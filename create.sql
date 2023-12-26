@@ -44,6 +44,9 @@ insert into TScheduleConf (trashType, weekday, weekord) values(3, 3, 1);
 
 insert into TDateConf (date, diffType, trashType) values('2024/1/1', 1, 3);
 
+-- 1 追加差分
+-- 2 打消差分
+
 -- 1 燃える
 -- 2 燃えない
 -- 3 空き缶、瓶、ペットボトル

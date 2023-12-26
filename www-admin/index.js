@@ -25,7 +25,6 @@ const MembersEditForm = {
                 this.ord = "";
             }
             this.showModal = true
-            console.log(this.showModal);
         },
         close (event) {
             event.preventDefault();
@@ -96,7 +95,6 @@ const ScheduleConfEditForm = {
                 this.weekord = "1";
             }
             this.showModal = true;
-            console.log(this.showModal);
         },
         close (event) {
             event.preventDefault();
@@ -156,7 +154,6 @@ const FirstMemberEditForm = {
         return {
             showModal: false,
             id: "0",
-            // name: "選択してください",
         };
     },
     methods: {
@@ -164,10 +161,8 @@ const FirstMemberEditForm = {
             let item = itemX.calcMember;
             if (item) {
                 this.id = itemX.confMemberId;
-                // this.name = item.name;
             }
             this.showModal = true;
-            console.log(this.showModal);
         },
         close (event) {
             event.preventDefault();
@@ -176,10 +171,8 @@ const FirstMemberEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id !== "0") {
-                console.log("0じゃない");
                 await putTFirstMember(this.id);
             } else {
-                console.log("0です");
                 await deleteTFirstMember();
             }
             this.showModal = false;

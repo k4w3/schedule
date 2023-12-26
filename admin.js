@@ -7,32 +7,6 @@ console.log("start");
 
 const router = new Router();
 
-// router.get("/api/TMembers/firstMember", (context) => {
-//     console.log("GET /api/TMembers/firstMember");
-//     const db = new DB("schedule.db");
-//     let confFirstMemberIds = db.queryEntries("SELECT id FROM TFirstMember");
-//     console.log(confFirstMemberIds);
-
-//     let res;
-//     if (confFirstMemberIds.length) {
-//         let confFirstMemberId = confFirstMemberIds[0].id;
-//         let confFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [confFirstMemberId]);
-//         if (confFirstMembers.length) {
-//             res = confFirstMembers[0];
-//         } else {
-//             let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-//             res = calcFirstMembers[0]
-//         }
-//     } else {
-//         let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-//         res = calcFirstMembers[0]
-//     }
-
-//     db.close();
-//     // console.log(res);
-//     context.response.body = res;
-// });
-
 router.get("/api/TMembers/firstMember", (context) => {
     console.log("GET /api/TMembers/firstMember");
     const db = new DB("schedule.db");
@@ -44,14 +18,12 @@ router.get("/api/TMembers/firstMember", (context) => {
         let confFirstMemberId = confFirstMemberIds[0].id;
         let confFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [confFirstMemberId]);
         if (confFirstMembers.length) {
-            // res = confFirstMembers[0];
             res = {
                 confMemberId: confFirstMembers[0].id,
                 calcMember: confFirstMembers[0]
             }
         } else {
             let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-            // res = calcFirstMembers[0]
             res = {
                 confMemberId: confFirstMemberIds[0].id,
                 calcMember: calcFirstMembers[0]
@@ -59,7 +31,6 @@ router.get("/api/TMembers/firstMember", (context) => {
         }
     } else {
         let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
-        // res = calcFirstMembers[0]
         res = {
             confMemberId: 0,
             calcMember: calcFirstMembers[0]
@@ -67,7 +38,6 @@ router.get("/api/TMembers/firstMember", (context) => {
     }
 
     db.close();
-    // console.log(res);
     context.response.body = res;
 });
 
