@@ -71,7 +71,7 @@ const MembersEditForm = {
 `
 };
 
-const ScheduleConfEditForm = {
+const WeeklyScheduleConfEditForm = {
     data () {
         return {
             showModal: false,
@@ -103,12 +103,12 @@ const ScheduleConfEditForm = {
         async submit (event) {
             event.preventDefault();
             if (this.id === "0") {
-                await addTScheduleConf(this.trashType, this.weekday, this.weekord);
+                await addTWeeklyScheduleConf(this.trashType, this.weekday, this.weekord);
             } else {
-                await putTScheduleConf(this.trashType, this.weekday, this.weekord, this.id);
+                await putTWeeklyScheduleConf(this.trashType, this.weekday, this.weekord, this.id);
             }
             this.showModal = false;
-            this.$parent.reloadScheduleConf();
+            this.$parent.reloadWeeklyScheduleConf();
         },
     },
     template: `
@@ -206,13 +206,13 @@ const ManageApp = {
             members: [],
             firstMember: null,
             sortedMembers: [],
-            scheduleConfs: [],
+            weeklyScheduleConfs: [],
             dutyDays: [],
             // members: [
             //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
             // ],
-            // scheduleConfs: [
+            // weeklyScheduleConfs: [
             //     {"id":1,"weekday":5,"weekord":2}, // 第2金曜日
             //     {"id":2,"weekday":3,"weekord":1} // 第1水曜日
             // ],
@@ -224,8 +224,8 @@ const ManageApp = {
     },
     async mounted () {
         this.reloadMembers();
-        await this.reloadScheduleConf();
-        this.reloadDutyDays(this.scheduleConfs);
+        await this.reloadWeeklyScheduleConf();
+        this.reloadDutyDays(this.weeklyScheduleConfs);
         await this.reloadFirstMember();
         this.sortMembers(this.members, this.firstMember.calcMember);
     },
@@ -240,14 +240,14 @@ const ManageApp = {
                 this.reloadMembers();
             };
         },
-        async reloadScheduleConf () {
-            this.scheduleConfs = JSON.parse(await selectTScheduleConf());
+        async reloadWeeklyScheduleConf () {
+            this.weeklyScheduleConfs = JSON.parse(await selectTWeeklyScheduleConf());
         },
         async deleteScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
-                await deleteTScheduleConf(id);
-                this.reloadScheduleConf();
+                await deleteTWeeklyScheduleConf(id);
+                this.reloadWeeklyScheduleConf();
             };
         },
         getTrashTypeString (trashType) {
@@ -303,12 +303,12 @@ const ManageApp = {
             this.sortedMembers = result;
         },
         // 現在から1年分の当番の日を計算する
-        reloadDutyDays (arrScheduleConf) {
+        reloadDutyDays (arrWeeklyScheduleConf) {
             let today = new Date();
             let dutyDaysForOneYear = [];
 
             for (let i = 0; i < 13; i++) {
-                let dutyDaysInMonth = this.getDaysInMonth(today.getFullYear(), today.getMonth(), arrScheduleConf);
+                let dutyDaysInMonth = this.getDaysInMonth(today.getFullYear(), today.getMonth(), arrWeeklyScheduleConf);
                 dutyDaysForOneYear = (dutyDaysForOneYear.concat(dutyDaysInMonth));
                 today.setMonth(today.getMonth() + 1);
             }
@@ -342,11 +342,11 @@ const ManageApp = {
             })
         },
         // ある月の指定した曜日の日にちのリストを返す
-        getDaysInMonth (year, month, arrScheduleConf) {
+        getDaysInMonth (year, month, arrWeeklyScheduleConf) {
             let result = [];
             const firstDay = new Date(year, month, 1)
             const distances = [];
-            arrScheduleConf.forEach((conf) => {
+            arrWeeklyScheduleConf.forEach((conf) => {
                 let distance = this.getDistanceFromFirstDayToWeekday(firstDay, conf.weekday, conf.weekord);
                 distances.push({distance: distance, trashType: conf.trashType});
             });
@@ -376,7 +376,7 @@ const ManageApp = {
     },
     components: {
         MembersEditForm,
-        ScheduleConfEditForm,
+        WeeklyScheduleConfEditForm,
         FirstMemberEditForm,
     },
 };

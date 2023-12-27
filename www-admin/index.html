@@ -48,11 +48,11 @@
     <h2 style="border-bottom: 1px solid">ゴミ収集日の設定</h2>
     <div>
         <form>
-            <button type="button" v-on:click="$refs.scheduleConfEditForm.open()">新規追加</button>
+            <button type="button" v-on:click="$refs.weeklyScheduleConfEditForm.open()">新規追加</button>
         </form>
     </div>
     <div>
-    <table border="1" v-if="scheduleConfs.length > 0">
+    <table border="1" v-if="weeklyScheduleConfs.length > 0">
         <thead>
         <tr>
             <th>ゴミの種類</th>
@@ -63,12 +63,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="item in scheduleConfs">
+        <tr v-for="item in weeklyScheduleConfs">
             <td>{{getTrashTypeString(item.trashType)}}</td>
             <td>{{getWeekdayString(item.weekday)}}</td>
             <td>{{item.weekord}}</td>
-            <td><button type="button" v-on:click="$refs.scheduleConfEditForm.open(item)">編集</button></td>
-            <td><button type="button" v-on:click="deleteScheduleConf(item.id)">削除</button></td>
+            <td><button type="button" v-on:click="$refs.weeklyScheduleConfEditForm.open(item)">編集</button></td>
+            <td><button type="button" v-on:click="deleteWeeklyScheduleConf(item.id)">削除</button></td>
         </tr>
         </tbody>
     </table>
@@ -103,7 +103,7 @@
     </div>
 
     <members-edit-form ref="membersEditForm"></members-edit-form>
-    <schedule-conf-edit-form ref="scheduleConfEditForm"></schedule-conf-edit-form>
+    <weekly-schedule-conf-edit-form ref="weeklyScheduleConfEditForm"></weekly-schedule-conf-edit-form>
     <first-member-edit-form ref="firstMemberEditForm"></first-member-edit-form>
 </body>
 </html>

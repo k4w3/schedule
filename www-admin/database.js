@@ -144,10 +144,10 @@ function deleteTMembers(id) {
 
 
 
-function selectTScheduleConf() {
+function selectTWeeklyScheduleConf() {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
-        req.open("GET", "/api/TScheduleConf");
+        req.open("GET", "/api/TWeeklyScheduleConf");
         req.onload = (event) => {
             resolve(req.responseText);
         };
@@ -155,10 +155,10 @@ function selectTScheduleConf() {
     });
 };
 
-function getTScheduleConf(id) {
+function getTWeeklyScheduleConf(id) {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
-        req.open("GET", "/api/TScheduleConf/" + id);
+        req.open("GET", "/api/TWeeklyScheduleConf/" + id);
         req.onload = (event) => {
             resolve(req.responseText);
         };
@@ -166,7 +166,7 @@ function getTScheduleConf(id) {
     });
 };
 
-function addTScheduleConf(trashType, weekday, weekord) {
+function addTWeeklyScheduleConf(trashType, weekday, weekord) {
     return new Promise((resolve, reject) => {
 
         let postData = "trashType=" + encodeURIComponent(trashType);
@@ -174,7 +174,7 @@ function addTScheduleConf(trashType, weekday, weekord) {
         postData += "&weekord=" + encodeURIComponent(weekord);
 
         let req = new XMLHttpRequest();
-        req.open("POST", "/api/TScheduleConf");
+        req.open("POST", "/api/TWeeklyScheduleConf");
         req.onload = (event) => {
             if (req.readyState === req.DONE) {
                 if (req.status === 200) {
@@ -186,11 +186,12 @@ function addTScheduleConf(trashType, weekday, weekord) {
         };
 
         req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        console.log(postData);
         req.send(postData);
     });
 };
 
-function putTScheduleConf(trashType, weekday, weekord, id) {
+function putTWeeklyScheduleConf(trashType, weekday, weekord, id) {
     return new Promise((resolve, reject) => {
 
         let putData = "trashType=" + encodeURIComponent(trashType);
@@ -198,7 +199,7 @@ function putTScheduleConf(trashType, weekday, weekord, id) {
         putData += "&weekord=" + encodeURIComponent(weekord);
 
         let req = new XMLHttpRequest();
-        req.open("PUT", "/api/TScheduleConf/" + id);
+        req.open("PUT", "/api/TWeeklyScheduleConf/" + id);
         req.onload = (event) => {
             if (req.readyState === req.DONE) {
                 if (req.status === 200) {
@@ -214,11 +215,11 @@ function putTScheduleConf(trashType, weekday, weekord, id) {
     });
 };
 
-function deleteTScheduleConf(id) {
+function deleteTWeeklyScheduleConf(id) {
     return new Promise((resolve, reject) => {
 
         let req = new XMLHttpRequest();
-        req.open("DELETE", "/api/TScheduleConf/" + id);
+        req.open("DELETE", "/api/TWeeklyScheduleConf/" + id);
         req.onload = (event) => {
             if (req.readyState === req.DONE) {
                 if (req.status === 200) {
@@ -235,10 +236,10 @@ function deleteTScheduleConf(id) {
 
 
 
-function selectTDateConf() {
+function selectTDailyScheduleConf() {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
-        req.open("GET", "/api/TDateConf");
+        req.open("GET", "/api/TDailyScheduleConf");
         req.onload = (event) => {
             resolve(req.responseText);
         };
@@ -246,10 +247,10 @@ function selectTDateConf() {
     });
 };
 
-function getTDateConf(id) {
+function getTDailyScheduleConf(id) {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
-        req.open("GET", "/api/TDateConf/" + id);
+        req.open("GET", "/api/TDailyScheduleConf/" + id);
         req.onload = (event) => {
             resolve(req.responseText);
         };
@@ -257,7 +258,7 @@ function getTDateConf(id) {
     });
 };
 
-function addTDateConf(date, diffType, trashType) {
+function addTDailyScheduleConf(date, diffType, trashType) {
     return new Promise((resolve, reject) => {
 
         let postData = "type=" + encodeURIComponent(type);
@@ -265,7 +266,7 @@ function addTDateConf(date, diffType, trashType) {
         postData += "&trashType=" + encodeURIComponent(trashType);
 
         let req = new XMLHttpRequest();
-        req.open("POST", "/api/TDateConf");
+        req.open("POST", "/api/TDailyScheduleConf");
         req.onload = (event) => {
             if (req.readyState === req.DONE) {
                 if (req.status === 200) {
@@ -281,7 +282,7 @@ function addTDateConf(date, diffType, trashType) {
     });
 };
 
-function putTDateConf(date, diffType, trashType, id) {
+function putTDailyScheduleConf(date, diffType, trashType, id) {
     return new Promise((resolve, reject) => {
 
         let putData = "type=" + encodeURIComponent(type);
@@ -289,7 +290,7 @@ function putTDateConf(date, diffType, trashType, id) {
         putData += "&trashType=" + encodeURIComponent(trashType);
 
         let req = new XMLHttpRequest();
-        req.open("PUT", "/api/TDateConf/" + id);
+        req.open("PUT", "/api/TDailyScheduleConf/" + id);
         req.onload = (event) => {
             if (req.readyState === req.DONE) {
                 if (req.status === 200) {
@@ -305,11 +306,11 @@ function putTDateConf(date, diffType, trashType, id) {
     });
 };
 
-function deleteTDateConf(id) {
+function deleteTDailyScheduleConf(id) {
     return new Promise((resolve, reject) => {
 
         let req = new XMLHttpRequest();
-        req.open("DELETE", "/api/TDateConf/" + id);
+        req.open("DELETE", "/api/TDailyScheduleConf/" + id);
         req.onload = (event) => {
             if (req.readyState === req.DONE) {
                 if (req.status === 200) {

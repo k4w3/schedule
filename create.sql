@@ -10,14 +10,14 @@ CREATE TABLE IF NOT EXISTS TFirstMember (
   id INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS TScheduleConf (
+CREATE TABLE IF NOT EXISTS TWeeklyScheduleConf (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   trashType INTEGER,
   weekday INTEGER,
   weekord INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS TDateConf (
+CREATE TABLE IF NOT EXISTS TDailyScheduleConf (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   date TEXT,
   diffType INTEGER, -- 1 or 2
@@ -30,19 +30,19 @@ insert into TMembers (team, name, ruby, ord) values(1, '佐藤次郎','サトウ
 insert into TMembers (team, name, ruby, ord) values(2, '鈴木三郎','スズキサブロウ', 3);
 insert into TMembers (team, name, ruby, ord) values(2, '高橋四郎','タカハシシロウ', 4);
 
-insert into TScheduleConf (trashType, weekday, weekord) values(1, 1, 1);
-insert into TScheduleConf (trashType, weekday, weekord) values(1, 1, 2);
-insert into TScheduleConf (trashType, weekday, weekord) values(1, 1, 3);
-insert into TScheduleConf (trashType, weekday, weekord) values(1, 1, 4);
-insert into TScheduleConf (trashType, weekday, weekord) values(1, 1, 5);
-insert into TScheduleConf (trashType, weekday, weekord) values(2, 5, 1);
-insert into TScheduleConf (trashType, weekday, weekord) values(2, 5, 2);
-insert into TScheduleConf (trashType, weekday, weekord) values(2, 5, 3);
-insert into TScheduleConf (trashType, weekday, weekord) values(2, 5, 4);
-insert into TScheduleConf (trashType, weekday, weekord) values(2, 5, 5);
-insert into TScheduleConf (trashType, weekday, weekord) values(3, 3, 1);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 1);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 2);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 3);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 4);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 5);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 1);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 2);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 3);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 4);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 5);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(3, 3, 1);
 
-insert into TDateConf (date, diffType, trashType) values('2024/1/1', 1, 3);
+insert into TDailyScheduleConf (date, diffType, trashType) values('2024/1/1', 1, 3);
 
 -- 1 追加差分
 -- 2 打消差分
