@@ -82,7 +82,34 @@
         <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">編集</button>
     </div>
 
-    <table border="1" v-if="sortedMembers.length > 0">
+    <div class="calendar" v-if="sortedMembers.length > 0">
+        <div>
+            <button v-on:click="prevMonth">&lt;</button>
+            {{ currentDate.toLocaleString('default', { month: 'long', year: 'numeric' }) }}
+            <button v-on:click="nextMonth">&gt;</button>
+        </div>
+        <div class="days">
+            <div v-for="n in weekdayOfFirstDay"></div>
+            <div v-for="day in daysInMonth.length" v-on:click="selectDate(day)" :class="{ 'day': true, 'selected': isSelected(day) }">
+                {{ day }}
+                <div v-for="day in daysInMonth">
+                    <div v-for="(dutyDay, index) in dutyDays">
+                        <!-- <span>{{day}}</span> -->
+                        <!-- <span>{{dutyDay}}</span> -->
+                        <span v-if="day.getTime() === dutyDay.date.getTime()">hoge</span>
+                    </div>
+                </div>
+            </div>
+            <!-- <div v-for="(dutyDay, index) in dutyDays" >
+                {{sortedMembers[index % sortedMembers.length].name}}
+            </div> -->
+            <!-- <div v-if="day === dutyDay">
+                {{sortedMembers[index % sortedMembers.length].name}}
+            </div> -->
+        </div>
+    </div>
+
+    <!-- <table border="1" v-if="sortedMembers.length > 0">
         <thead>
         <tr>
             <th>当番日</th>
@@ -99,12 +126,12 @@
             <td>{{sortedMembers[index % sortedMembers.length].name}}</td>
         </tr>
         </tbody>
-    </table>
+    </table> -->
     </div>
 
     <members-edit-form ref="membersEditForm"></members-edit-form>
     <weekly-schedule-conf-edit-form ref="weeklyScheduleConfEditForm"></weekly-schedule-conf-edit-form>
     <first-member-edit-form ref="firstMemberEditForm"></first-member-edit-form>
-    <calendar ref="calendar"></calendar>
+    <!-- <calendar ref="calendar"></calendar> -->
 </body>
 </html>
