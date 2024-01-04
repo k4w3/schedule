@@ -207,8 +207,12 @@ const ManageApp = {
             firstMember: null,
             sortedMembers: [],
             weeklyScheduleConfs: [],
+            currentDate: new Date(),
+            selectedDate: null,
+            // daysInMonth: [],
             dutyDays: [],
             duties: [],
+            calendarDays: [],
             // members: [
             //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
@@ -230,6 +234,20 @@ const ManageApp = {
         await this.reloadFirstMember();
         this.sortMembers(this.members, this.firstMember.calcMember);
 
+        // {
+        //     let result = [];
+        //     const year = this.currentDate.getFullYear();
+        //     const month = this.currentDate.getMonth();
+        //     const lastDay = new Date(year, month, 0).getDate();
+        //     for (let i = 1; i <= lastDay; i++) {
+        //         result.push(new Date(year, month, i));
+        //     };
+        //     this.daysInMonth = result;
+        //     // console.log(this.daysInMonth);
+        //     // return result;
+        //     // return new Date(year, month, 0).getDate();
+        // }
+
         for (let i = 0; i < this.dutyDays.length; i++ ) {
             let dutyDay = this.dutyDays[i];
             // console.log(dutyDay);
@@ -237,6 +255,7 @@ const ManageApp = {
             // console.log(member);
             let obj = {
                 date: dutyDay.date,
+                dateString: dutyDay.dateString,
                 trashType: dutyDay.trashType,
                 team: member.team,
                 name: member.name,
@@ -244,10 +263,48 @@ const ManageApp = {
             // console.log(obj);
             this.duties.push(obj);
         };
-        console.log(this.duties);
+        // console.log(this.duties);
 
         // console.log(this.sortedMembers);
         // console.log(this.dutyDays);
+
+        // console.log(this.daysInMonth);
+        // console.log(this.duties);
+        {
+            let daysInMonth = this.daysInMonth;
+            for (let i = 0; i < daysInMonth.length; i++) {
+                let day = daysInMonth[i];
+                const duties = this.duties.filter((duty) => duty.date.getTime() === day.getTime());
+                // console.log(day);
+                // console.log(duties);
+                let obj = {
+                    date: day,
+                    duties: duties,
+                };
+                // console.log(obj);
+                this.calendarDays.push(obj);
+            }
+            console.log(this.calendarDays);
+        }
+    },
+    computed: {
+        daysInMonth() {
+            let result = [];
+            const year = this.currentDate.getFullYear();
+            const month = this.currentDate.getMonth();
+            const lastDay = new Date(year, month, 0).getDate();
+            for (let i = 1; i <= lastDay; i++) {
+                result.push(new Date(year, month, i));
+            };
+            // console.log(result);
+            return result;
+            // return new Date(year, month, 0).getDate();
+        },
+        weekdayOfFirstDay() {
+            const year = this.currentDate.getFullYear();
+            const month = this.currentDate.getMonth();
+            return new Date(year, month, 1).getDay();
+        },
     },
     methods: {
         async reloadMembers () {
@@ -358,8 +415,15 @@ const ManageApp = {
                 let date = dutyDay.getDate();
                 let weekday = this.getWeekdayString(dutyDay.getDay());
                 let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
-                this.dutyDays.push({date: dutyDayString, trashType: trashTypeString});
+                this.dutyDays.push({date: dutyDay, dateString: dutyDayString, trashType: trashTypeString});
             })
+            // result.sort();
+            // result.forEach((oItem) => {
+            //     let trashTypeString = this.getTrashTypeString(oItem.trashType);
+            //     let item = oItem.time;
+            //     let dutyDay = new Date(item);
+            //     this.dutyDays.push({date: dutyDay, trashType: trashTypeString});
+            // })
         },
         // ある月の指定した曜日の日にちのリストを返す
         getDaysInMonth (year, month, arrWeeklyScheduleConf) {
@@ -392,6 +456,23 @@ const ManageApp = {
                 distanceToWeekday = weekday + (7 - weekdayOfFirstDay) // 初日の曜日より前の曜日の場合
             }
             return distanceToWeekday + (7 * (weekord - 1));
+        },
+        isSelected(day) {
+            return (
+                this.selectedDate &&
+                this.selectedDate.getFullYear() === this.currentDate.getFullYear() &&
+                this.selectedDate.getMonth() === this.currentDate.getMonth() &&
+                this.selectedDate.getDate() === day
+            );
+        },
+        selectDate(day) {
+            this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
+        },
+        prevMonth() {
+            this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+        },
+        nextMonth() {
+            this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
         },
     },
     components: {

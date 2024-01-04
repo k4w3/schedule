@@ -21,3 +21,31 @@ div.modal-content {
     padding: 1em;
     background:#fff;
 }
+
+.calendar {
+  font-size: 30px;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  /* height: 100vh; */
+  margin-top: 50px;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.day:hover {
+  background-color: #f0f0f0;
+}

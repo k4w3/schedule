@@ -99,13 +99,47 @@
             <td>{{sortedMembers[index % sortedMembers.length].name}}</td>
         </tr> -->
         <tr v-for="duty in duties">
-            <td>{{duty.date}}</td>
+            <td>{{duty.dateString}}</td>
             <td>{{duty.trashType}}</td>
             <td>{{duty.team}}</td>
             <td>{{duty.name}}</td>
         </tr>
         </tbody>
     </table>
+
+    <div class="calendar" v-if="sortedMembers.length > 0">
+        <div>
+            <button v-on:click="prevMonth">&lt;</button>
+            {{ currentDate.toLocaleString('default', { month: 'long', year: 'numeric' }) }}
+            <button v-on:click="nextMonth">&gt;</button>
+        </div>
+        <div class="days">
+            <div v-for="n in weekdayOfFirstDay"></div>
+            <!-- <div v-for="day in daysInMonth.length" v-on:click="selectDate(day)" :class="{ 'day': true, 'selected': isSelected(day) }"> -->
+            <div v-for="day in calendarDays" v-on:click="selectDate(day.date.getDate())" :class="{ 'day': true, 'selected': isSelected(day.date.getDate()) }">
+                {{ day.date.getDate() }}
+                <div v-for=" duty in day.duties">
+                {{ duty.name }}
+                </div>
+                <!-- {{ day.hoge }} -->
+                <!-- <div v-for="day in daysInMonth"> -->
+                    <!-- <div v-for="(dutyDay, index) in dutyDays"> -->
+                        <!-- <span>{{day}}</span> -->
+                        <!-- <span>{{dutyDay}}</span> -->
+                        <!-- <span v-if="day.getTime() === dutyDay.date.getTime()">hoge</span> -->
+                    <!-- </div> -->
+                <!-- </div> -->
+            </div>
+            <!-- <div v-for="(dutyDay, index) in dutyDays" >
+                {{sortedMembers[index % sortedMembers.length].name}}
+            </div> -->
+            <!-- <div v-if="day === dutyDay">
+                {{sortedMembers[index % sortedMembers.length].name}}
+            </div> -->
+        </div>
+    </div>
+
+
     </div>
 
     <members-edit-form ref="membersEditForm"></members-edit-form>
