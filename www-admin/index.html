@@ -82,7 +82,7 @@
         <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">編集</button>
     </div>
 
-    <table border="1" v-if="sortedMembers.length > 0">
+    <table border="1">
         <thead>
         <tr>
             <th>当番日</th>
@@ -92,11 +92,17 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(dutyDay, index) in dutyDays">
+        <!-- <tr v-for="(dutyDay, index) in dutyDays">
             <td>{{dutyDay.date}}</td>
             <td>{{dutyDay.trashType}}</td>
             <td>{{sortedMembers[index % sortedMembers.length].team}}</td>
             <td>{{sortedMembers[index % sortedMembers.length].name}}</td>
+        </tr> -->
+        <tr v-for="duty in duties">
+            <td>{{duty.date}}</td>
+            <td>{{duty.trashType}}</td>
+            <td>{{duty.team}}</td>
+            <td>{{duty.name}}</td>
         </tr>
         </tbody>
     </table>

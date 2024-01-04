@@ -208,6 +208,7 @@ const ManageApp = {
             sortedMembers: [],
             weeklyScheduleConfs: [],
             dutyDays: [],
+            duties: [],
             // members: [
             //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
@@ -228,6 +229,25 @@ const ManageApp = {
         this.reloadDutyDays(this.weeklyScheduleConfs);
         await this.reloadFirstMember();
         this.sortMembers(this.members, this.firstMember.calcMember);
+
+        for (let i = 0; i < this.dutyDays.length; i++ ) {
+            let dutyDay = this.dutyDays[i];
+            // console.log(dutyDay);
+            let member = this.sortedMembers[i % this.sortedMembers.length];
+            // console.log(member);
+            let obj = {
+                date: dutyDay.date,
+                trashType: dutyDay.trashType,
+                team: member.team,
+                name: member.name,
+                ruby: member.ruby};
+            // console.log(obj);
+            this.duties.push(obj);
+        };
+        console.log(this.duties);
+
+        // console.log(this.sortedMembers);
+        // console.log(this.dutyDays);
     },
     methods: {
         async reloadMembers () {
