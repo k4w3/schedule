@@ -233,59 +233,8 @@ const ManageApp = {
         this.reloadDutyDays(this.weeklyScheduleConfs);
         await this.reloadFirstMember();
         this.sortMembers(this.members, this.firstMember.calcMember);
-
-        // {
-        //     let result = [];
-        //     const year = this.currentDate.getFullYear();
-        //     const month = this.currentDate.getMonth();
-        //     const lastDay = new Date(year, month, 0).getDate();
-        //     for (let i = 1; i <= lastDay; i++) {
-        //         result.push(new Date(year, month, i));
-        //     };
-        //     this.daysInMonth = result;
-        //     // console.log(this.daysInMonth);
-        //     // return result;
-        //     // return new Date(year, month, 0).getDate();
-        // }
-
-        for (let i = 0; i < this.dutyDays.length; i++ ) {
-            let dutyDay = this.dutyDays[i];
-            // console.log(dutyDay);
-            let member = this.sortedMembers[i % this.sortedMembers.length];
-            // console.log(member);
-            let obj = {
-                date: dutyDay.date,
-                dateString: dutyDay.dateString,
-                trashType: dutyDay.trashType,
-                team: member.team,
-                name: member.name,
-                ruby: member.ruby};
-            // console.log(obj);
-            this.duties.push(obj);
-        };
-        // console.log(this.duties);
-
-        // console.log(this.sortedMembers);
-        // console.log(this.dutyDays);
-
-        // console.log(this.daysInMonth);
-        // console.log(this.duties);
-        {
-            let daysInMonth = this.daysInMonth;
-            for (let i = 0; i < daysInMonth.length; i++) {
-                let day = daysInMonth[i];
-                const duties = this.duties.filter((duty) => duty.date.getTime() === day.getTime());
-                // console.log(day);
-                // console.log(duties);
-                let obj = {
-                    date: day,
-                    duties: duties,
-                };
-                // console.log(obj);
-                this.calendarDays.push(obj);
-            }
-            // console.log(this.calendarDays);
-        }
+        this.createDuties();
+        this.reloadCalendarDays();
     },
     computed: {
         daysInMonth() {
@@ -361,6 +310,35 @@ const ManageApp = {
         },
         async reloadFirstMember () {
             this.firstMember = JSON.parse(await getTFirstMember());
+        },
+        reloadCalendarDays () {
+            let daysInMonth = this.daysInMonth;
+            for (let i = 0; i < daysInMonth.length; i++) {
+                let day = daysInMonth[i];
+                const duties = this.duties.filter((duty) => duty.date.getTime() === day.getTime());
+                let obj = {
+                    date: day,
+                    duties: duties,
+                };
+
+                this.calendarDays.push(obj);
+            }
+        },
+        createDuties () {
+            for (let i = 0; i < this.dutyDays.length; i++) {
+                let dutyDay = this.dutyDays[i];
+                let member = this.sortedMembers[i % this.sortedMembers.length];
+
+                let obj = {
+                    date: dutyDay.date,
+                    dateString: dutyDay.dateString,
+                    trashType: dutyDay.trashType,
+                    team: member.team,
+                    name: member.name,
+                    ruby: member.ruby};
+
+                this.duties.push(obj);
+            };
         },
         async sortMembers (members, firstMember) {
             // const index = members.findIndex((member) => {
