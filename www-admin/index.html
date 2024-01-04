@@ -11,13 +11,13 @@
 </head>
 <body id="app">
     <h1>管理画面</h1>
+
     <h2 style="border-bottom: 1px solid">メンバーの設定</h2>
     <div>
         <form>
             <button type="button" v-on:click="$refs.membersEditForm.open()">新規追加</button>
         </form>
     </div>
-
     <div>
         <form>
             <table border="1" v-if="members.length > 0">
@@ -45,6 +45,7 @@
         </form>
     </div>
 
+
     <h2 style="border-bottom: 1px solid">ゴミ収集日の設定</h2>
     <div>
         <form>
@@ -52,54 +53,54 @@
         </form>
     </div>
     <div>
-    <table border="1" v-if="weeklyScheduleConfs.length > 0">
-        <thead>
-        <tr>
-            <th>ゴミの種類</th>
-            <th>曜日</th>
-            <th>第</th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="item in weeklyScheduleConfs">
-            <td>{{getTrashTypeString(item.trashType)}}</td>
-            <td>{{getWeekdayString(item.weekday)}}</td>
-            <td>{{item.weekord}}</td>
-            <td><button type="button" v-on:click="$refs.weeklyScheduleConfEditForm.open(item)">編集</button></td>
-            <td><button type="button" v-on:click="deleteWeeklyScheduleConf(item.id)">削除</button></td>
-        </tr>
-        </tbody>
-    </table>
+        <table border="1" v-if="weeklyScheduleConfs.length > 0">
+            <thead>
+            <tr>
+                <th>ゴミの種類</th>
+                <th>曜日</th>
+                <th>第</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in weeklyScheduleConfs">
+                <td>{{getTrashTypeString(item.trashType)}}</td>
+                <td>{{getWeekdayString(item.weekday)}}</td>
+                <td>{{item.weekord}}</td>
+                <td><button type="button" v-on:click="$refs.weeklyScheduleConfEditForm.open(item)">編集</button></td>
+                <td><button type="button" v-on:click="deleteWeeklyScheduleConf(item.id)">削除</button></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
-    <div>
-    <h2 style="border-bottom: 1px solid">当番表</h2>
 
+    <h2 style="border-bottom: 1px solid">当番表</h2>
     <div v-if="firstMember" style="display: flex;">
         <div>先頭メンバー > {{firstMember.calcMember.name}}{{firstMember.confMemberId ? "" : "(なし)"}}</div>
         <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">編集</button>
     </div>
-
-    <table border="1">
-        <thead>
-        <tr>
-            <th>当番日</th>
-            <th>ゴミの種類</th>
-            <th>班</th>
-            <th>名前</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="duty in duties">
-            <td>{{duty.dateString}}</td>
-            <td>{{duty.trashType}}</td>
-            <td>{{duty.team}}</td>
-            <td>{{duty.name}}</td>
-        </tr>
-        </tbody>
-    </table>
+    <div>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>当番日</th>
+                <th>ゴミの種類</th>
+                <th>班</th>
+                <th>名前</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="duty in duties">
+                <td>{{duty.dateString}}</td>
+                <td>{{duty.trashType}}</td>
+                <td>{{duty.team}}</td>
+                <td>{{duty.name}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="calendar" v-if="sortedMembers.length > 0">
         <div>
@@ -116,9 +117,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-
     </div>
 
     <members-edit-form ref="membersEditForm"></members-edit-form>
