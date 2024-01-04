@@ -354,7 +354,6 @@ const ManageApp = {
             // console.log(index);
 
             let result = members.slice(index).concat(members.slice(0, index));
-            // return result;
             this.sortedMembers = result;
         },
         // 現在から1年分の当番の日を計算する
@@ -406,13 +405,6 @@ const ManageApp = {
                 let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
                 this.dutyDays.push({date: dutyDay, dateString: dutyDayString, trashType: trashTypeString});
             })
-            // result.sort();
-            // result.forEach((oItem) => {
-            //     let trashTypeString = this.getTrashTypeString(oItem.trashType);
-            //     let item = oItem.time;
-            //     let dutyDay = new Date(item);
-            //     this.dutyDays.push({date: dutyDay, trashType: trashTypeString});
-            // })
         },
         // ある月の指定した曜日の日にちのリストを返す
         getDaysInMonth (year, month, arrWeeklyScheduleConf) {
