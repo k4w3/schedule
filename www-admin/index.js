@@ -284,7 +284,7 @@ const ManageApp = {
                 // console.log(obj);
                 this.calendarDays.push(obj);
             }
-            console.log(this.calendarDays);
+            // console.log(this.calendarDays);
         }
     },
     computed: {
@@ -405,7 +405,18 @@ const ManageApp = {
             });
 
             // 表示形式を加工してdutyDaysに代入する
-            result.sort();
+            // result.sort();
+            result.sort((a, b) => {
+                if (a.time < b.time) {
+                    return -1;
+                }
+                if (a.time > b.time) {
+                    return 1;
+                }
+
+                // names must be equal
+                return 0;
+            });
             result.forEach((oItem) => {
                 let trashTypeString = this.getTrashTypeString(oItem.trashType);
                 let item = oItem.time;
