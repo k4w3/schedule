@@ -9,7 +9,7 @@
     <script src="./database.js"></script>
     <script src="./index.js"></script>
 </head>
-<body id="app">
+<body id="app" v-cloak>
     <h1>管理画面</h1>
 
     <h2 style="border-bottom: 1px solid">メンバーの設定</h2>
@@ -105,7 +105,7 @@
     <div class="calendar" v-if="sortedMembers.length > 0">
         <div>
             <button v-on:click="prevMonth">&lt;</button>
-            {{ currentDate.toLocaleString('default', { month: 'long', year: 'numeric' }) }}
+            {{ monthLabel }}
             <button v-on:click="nextMonth">&gt;</button>
         </div>
         <div class="days">

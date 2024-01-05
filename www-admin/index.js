@@ -38,7 +38,7 @@ const MembersEditForm = {
                 await putTMembers(this.team, this.name, this.ruby, this.ord, this.id);
             }
             this.showModal = false;
-            this.$parent.reloadMembers();
+            this.$parent.loadMembers();
         },
     },
     template: `
@@ -108,7 +108,7 @@ const WeeklyScheduleConfEditForm = {
                 await putTWeeklyScheduleConf(this.trashType, this.weekday, this.weekord, this.id);
             }
             this.showModal = false;
-            this.$parent.reloadWeeklyScheduleConf();
+            this.$parent.loadWeeklyScheduleConf();
         },
     },
     template: `
@@ -176,8 +176,10 @@ const FirstMemberEditForm = {
                 await deleteTFirstMember();
             }
             this.showModal = false;
-            await this.$parent.reloadFirstMember();
-            this.$parent.sortMembers(this.$parent.members, this.$parent.firstMember.calcMember);
+            await this.$parent.loadFirstMember();
+            this.$parent.calcSortedMembers();
+            this.$parent.calcDuties();
+            this.$parent.calcCalendarDays();
         },
     },
     template: `
@@ -202,17 +204,18 @@ const FirstMemberEditForm = {
 
 const ManageApp = {
     data () {
+        let currentDate = new Date();
         return {
+            weeklyScheduleConfs: [],
+            dutyDays: [],
             members: [],
             firstMember: null,
             sortedMembers: [],
-            weeklyScheduleConfs: [],
-            currentDate: new Date(),
-            selectedDate: null,
-            // daysInMonth: [],
-            dutyDays: [],
             duties: [],
             calendarDays: [],
+
+            currentMonth: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+            selectedDate: null,
             // members: [
             //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
@@ -228,19 +231,19 @@ const ManageApp = {
         };
     },
     async mounted () {
-        this.reloadMembers();
-        await this.reloadWeeklyScheduleConf();
-        this.reloadDutyDays(this.weeklyScheduleConfs);
-        await this.reloadFirstMember();
-        this.sortMembers(this.members, this.firstMember.calcMember);
-        this.createDuties();
-        this.reloadCalendarDays();
+        await this.loadWeeklyScheduleConf();
+        this.calcDutyDays();
+        await this.loadMembers();
+        await this.loadFirstMember();
+        this.calcSortedMembers();
+        this.calcDuties();
+        this.calcCalendarDays();
     },
     computed: {
         daysInMonth() {
             let result = [];
-            const year = this.currentDate.getFullYear();
-            const month = this.currentDate.getMonth();
+            const year = this.currentMonth.getFullYear();
+            const month = this.currentMonth.getMonth();
             const lastDay = new Date(year, month, 0).getDate();
             for (let i = 1; i <= lastDay; i++) {
                 result.push(new Date(year, month, i));
@@ -250,30 +253,33 @@ const ManageApp = {
             // return new Date(year, month, 0).getDate();
         },
         weekdayOfFirstDay() {
-            const year = this.currentDate.getFullYear();
-            const month = this.currentDate.getMonth();
+            const year = this.currentMonth.getFullYear();
+            const month = this.currentMonth.getMonth();
             return new Date(year, month, 1).getDay();
         },
+        monthLabel () {
+            return this.currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+        }
     },
     methods: {
-        async reloadMembers () {
+        async loadMembers () {
             this.members = JSON.parse(await selectTMembers());
         },
         async deleteMember (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
                 await deleteTMembers(id);
-                this.reloadMembers();
+                this.loadMembers();
             };
         },
-        async reloadWeeklyScheduleConf () {
+        async loadWeeklyScheduleConf () {
             this.weeklyScheduleConfs = JSON.parse(await selectTWeeklyScheduleConf());
         },
         async deleteScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
                 await deleteTWeeklyScheduleConf(id);
-                this.reloadWeeklyScheduleConf();
+                this.loadWeeklyScheduleConf();
             };
         },
         getTrashTypeString (trashType) {
@@ -308,10 +314,11 @@ const ManageApp = {
                     return "不明";
             }
         },
-        async reloadFirstMember () {
+        async loadFirstMember () {
             this.firstMember = JSON.parse(await getTFirstMember());
         },
-        reloadCalendarDays () {
+        calcCalendarDays () {
+            let calendarDays = [];
             let daysInMonth = this.daysInMonth;
             for (let i = 0; i < daysInMonth.length; i++) {
                 let day = daysInMonth[i];
@@ -321,10 +328,12 @@ const ManageApp = {
                     duties: duties,
                 };
 
-                this.calendarDays.push(obj);
+                calendarDays.push(obj);
             }
+            this.calendarDays = calendarDays;
         },
-        createDuties () {
+        calcDuties () {
+            let duties = [];
             for (let i = 0; i < this.dutyDays.length; i++) {
                 let dutyDay = this.dutyDays[i];
                 let member = this.sortedMembers[i % this.sortedMembers.length];
@@ -337,13 +346,16 @@ const ManageApp = {
                     name: member.name,
                     ruby: member.ruby};
 
-                this.duties.push(obj);
+                duties.push(obj);
             };
+            this.duties = duties;
         },
-        async sortMembers (members, firstMember) {
+        calcSortedMembers () {
             // const index = members.findIndex((member) => {
             //     return (member.id === Number(firstMember.id));
             // });
+            let members = this.members;
+            let firstMember = this.firstMember.calcMember;
 
             let index;
             for (let i = 0; i < members.length; i++) {
@@ -357,7 +369,8 @@ const ManageApp = {
             this.sortedMembers = result;
         },
         // 現在から1年分の当番の日を計算する
-        reloadDutyDays (arrWeeklyScheduleConf) {
+        calcDutyDays () {
+            let arrWeeklyScheduleConf = this.weeklyScheduleConfs;
             let today = new Date();
             let dutyDaysForOneYear = [];
 
@@ -394,6 +407,7 @@ const ManageApp = {
                 // names must be equal
                 return 0;
             });
+            let dutyDays = [];
             result.forEach((oItem) => {
                 let trashTypeString = this.getTrashTypeString(oItem.trashType);
                 let item = oItem.time;
@@ -403,8 +417,9 @@ const ManageApp = {
                 let date = dutyDay.getDate();
                 let weekday = this.getWeekdayString(dutyDay.getDay());
                 let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
-                this.dutyDays.push({date: dutyDay, dateString: dutyDayString, trashType: trashTypeString});
+                dutyDays.push({date: dutyDay, dateString: dutyDayString, trashType: trashTypeString});
             })
+            this.dutyDays = dutyDays;
         },
         // ある月の指定した曜日の日にちのリストを返す
         getDaysInMonth (year, month, arrWeeklyScheduleConf) {
@@ -441,19 +456,21 @@ const ManageApp = {
         isSelected(day) {
             return (
                 this.selectedDate &&
-                this.selectedDate.getFullYear() === this.currentDate.getFullYear() &&
-                this.selectedDate.getMonth() === this.currentDate.getMonth() &&
+                this.selectedDate.getFullYear() === this.currentMonth.getFullYear() &&
+                this.selectedDate.getMonth() === this.currentMonth.getMonth() &&
                 this.selectedDate.getDate() === day
             );
         },
         selectDate(day) {
-            this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
+            this.selectedDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), day);
         },
         prevMonth() {
-            this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+            this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
+            this.calcCalendarDays();
         },
         nextMonth() {
-            this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+            this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
+            this.calcCalendarDays();
         },
     },
     components: {
