@@ -38,7 +38,7 @@ const MembersEditForm = {
                 await putTMembers(this.team, this.name, this.ruby, this.ord, this.id);
             }
             this.showModal = false;
-            this.$parent.loadMembers();
+            this.$parent.update();
         },
     },
     template: `
@@ -108,7 +108,7 @@ const WeeklyScheduleConfEditForm = {
                 await putTWeeklyScheduleConf(this.trashType, this.weekday, this.weekord, this.id);
             }
             this.showModal = false;
-            this.$parent.loadWeeklyScheduleConf();
+            this.$parent.update();
         },
     },
     template: `
@@ -176,10 +176,7 @@ const FirstMemberEditForm = {
                 await deleteTFirstMember();
             }
             this.showModal = false;
-            await this.$parent.loadFirstMember();
-            this.$parent.calcSortedMembers();
-            this.$parent.calcDuties();
-            this.$parent.calcCalendarDays();
+            this.$parent.update();
         },
     },
     template: `
@@ -262,6 +259,15 @@ const ManageApp = {
         }
     },
     methods: {
+        async update () {
+            await this.loadWeeklyScheduleConf();
+            this.calcDutyDays();
+            await this.loadMembers();
+            await this.loadFirstMember();
+            this.calcSortedMembers();
+            this.calcDuties();
+            this.calcCalendarDays();
+        },
         async loadMembers () {
             this.members = JSON.parse(await selectTMembers());
         },
@@ -269,17 +275,18 @@ const ManageApp = {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
                 await deleteTMembers(id);
-                this.loadMembers();
+                if (this.firstMember.confMemberId === id) await deleteTFirstMember(id);
+                this.update();
             };
         },
         async loadWeeklyScheduleConf () {
             this.weeklyScheduleConfs = JSON.parse(await selectTWeeklyScheduleConf());
         },
-        async deleteScheduleConf (id) {
+        async deleteWeeklyScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
                 await deleteTWeeklyScheduleConf(id);
-                this.loadWeeklyScheduleConf();
+                this.update();
             };
         },
         getTrashTypeString (trashType) {
