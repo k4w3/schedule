@@ -38,13 +38,13 @@ div.modal-content {
 }
 
 .days {
+  text-align: center;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 1px;
 }
 
 .day {
-  text-align: center;
   padding: 10px;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -52,4 +52,20 @@ div.modal-content {
 
 .day:hover {
   background-color: #f0f0f0;
+}
+
+.dayDetails {
+    font-size: 20px;
+}
+
+.trashType {
+    color: green;
+}
+
+.trashType.burnable {
+    color: red;
+}
+
+.trashType.non-burnable {
+    color: blue;
 }

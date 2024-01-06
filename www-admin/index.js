@@ -213,6 +213,7 @@ const ManageApp = {
 
             currentMonth: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
             selectedDate: null,
+            weekDayLabel: ["日", "月", "火", "水", "木", "金", "土"],
             // members: [
             //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
             //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
