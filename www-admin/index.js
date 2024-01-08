@@ -242,7 +242,7 @@ const ManageApp = {
             let result = [];
             const year = this.currentMonth.getFullYear();
             const month = this.currentMonth.getMonth();
-            const lastDay = new Date(year, month, 0).getDate();
+            const lastDay = new Date(year, month + 1, 0).getDate();
             for (let i = 1; i <= lastDay; i++) {
                 result.push(new Date(year, month, i));
             };
