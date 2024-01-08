@@ -261,7 +261,7 @@ function getTDailyScheduleConf(id) {
 function addTDailyScheduleConf(date, diffType, trashType) {
     return new Promise((resolve, reject) => {
 
-        let postData = "type=" + encodeURIComponent(type);
+        let postData = "date=" + encodeURIComponent(date);
         postData += "&diffType=" + encodeURIComponent(diffType);
         postData += "&trashType=" + encodeURIComponent(trashType);
 
@@ -285,7 +285,7 @@ function addTDailyScheduleConf(date, diffType, trashType) {
 function putTDailyScheduleConf(date, diffType, trashType, id) {
     return new Promise((resolve, reject) => {
 
-        let putData = "type=" + encodeURIComponent(type);
+        let putData = "date=" + encodeURIComponent(date);
         putData += "&diffType=" + encodeURIComponent(diffType);
         putData += "&trashType=" + encodeURIComponent(trashType);
 
