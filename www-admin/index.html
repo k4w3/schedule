@@ -111,7 +111,8 @@
         <div class="days">
             <div v-for="w in weekDayLabel">{{ w }}</div>
             <div v-for="day in daysInPrevMonth" class="day-invalid">{{ day.getDate() }}</div>
-            <div v-for="day in calendarDays" v-on:click="selectDate(day.date.getDate())" :class="{ 'day-valid': true, 'selected': isSelected(day.date.getDate()) }">
+            <!-- <div v-for="day in calendarDays" v-on:click="selectDate(day.date.getDate())" :class="{ 'day-valid': true, 'selected': isSelected(day.date.getDate()) }"> -->
+            <div v-for="day in calendarDays" v-on:click="$refs.dailyScheduleConfEditForm.open(day)" :class="{ 'day-valid': true, 'selected': isSelected(day.date.getDate()) }">
                 {{ day.date.getDate() }}
                 <div v-for=" duty in day.duties" class="dayDetails">
                     <!-- <div class="trashType">{{ duty.trashType }}</div> -->
@@ -125,6 +126,7 @@
 
     <members-edit-form ref="membersEditForm"></members-edit-form>
     <weekly-schedule-conf-edit-form ref="weeklyScheduleConfEditForm"></weekly-schedule-conf-edit-form>
+    <daily-schedule-conf-edit-form ref="dailyScheduleConfEditForm"></daily-schedule-conf-edit-form>
     <first-member-edit-form ref="firstMemberEditForm"></first-member-edit-form>
 </body>
 </html>

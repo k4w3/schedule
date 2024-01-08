@@ -47,9 +47,10 @@ insert into TDailyScheduleConf (date, diffType, trashType) values('2024/1/1', 1,
 -- 1 追加差分
 -- 2 打消差分
 
+-- 0 打消時の値
 -- 1 燃える
 -- 2 燃えない
--- 3 空き缶、瓶、ペットボトル
+-- 3 その他
 
 -- 0 日曜日
 -- 1 月曜日
