@@ -44,14 +44,21 @@ div.modal-content {
   gap: 1px;
 }
 
-.day {
+.day-valid {
   padding: 10px;
   border: 1px solid #ccc;
   cursor: pointer;
 }
 
-.day:hover {
+.day-valid:hover {
   background-color: #f0f0f0;
+}
+
+.day-invalid {
+  padding: 10px;
+  border: 1px solid #ccc;
+  color: gray;
+  background-color: lightgray;
 }
 
 .dayDetails {

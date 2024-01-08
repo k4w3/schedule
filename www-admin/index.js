@@ -250,14 +250,31 @@ const ManageApp = {
             return result;
             // return new Date(year, month, 0).getDate();
         },
-        weekdayOfFirstDay() {
-            const year = this.currentMonth.getFullYear();
-            const month = this.currentMonth.getMonth();
-            return new Date(year, month, 1).getDay();
-        },
         monthLabel () {
             return this.currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
-        }
+        },
+        daysInPrevMonth () {
+            let result = [];
+            let firstDayOfCurrentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
+            let weekdayOfFirstDay = firstDayOfCurrentMonth.getDay();
+            let prevDay = firstDayOfCurrentMonth;
+            for (let i = weekdayOfFirstDay; i > 0; i--) {
+                prevDay = new Date(firstDayOfCurrentMonth.getFullYear(), firstDayOfCurrentMonth.getMonth() ,firstDayOfCurrentMonth.getDate() - i);
+                result.push(prevDay);
+            };
+            return result;
+        },
+        daysInNextMonth () {
+            let result = [];
+            let lastDayOfCurrentMonth  = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 0);
+            let weekdayOfLastDay = lastDayOfCurrentMonth.getDay();
+            let nextDay = lastDayOfCurrentMonth;
+            for (let i = 1; i < (7 - weekdayOfLastDay); i++) {
+                nextDay = new Date(lastDayOfCurrentMonth.getFullYear(), lastDayOfCurrentMonth.getMonth(), lastDayOfCurrentMonth.getDate() + i);
+                result.push(nextDay);
+            };
+            return result;
+        },
     },
     methods: {
         async update () {

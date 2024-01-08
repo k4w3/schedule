@@ -54,3 +54,5 @@ today.setMonth(today.getMonth() + 1); // + 1ヶ月
 
 // 日の加算
 today.setDate(today.getDate() + 1); // + 1日
+
+↑ setは使わずに毎回加減算した日付を new Dateしたほうがいいかもしれない

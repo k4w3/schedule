@@ -110,8 +110,8 @@
         </div>
         <div class="days">
             <div v-for="w in weekDayLabel">{{ w }}</div>
-            <div v-for="n in weekdayOfFirstDay"></div>
-            <div v-for="day in calendarDays" v-on:click="selectDate(day.date.getDate())" :class="{ 'day': true, 'selected': isSelected(day.date.getDate()) }">
+            <div v-for="day in daysInPrevMonth" class="day-invalid">{{ day.getDate() }}</div>
+            <div v-for="day in calendarDays" v-on:click="selectDate(day.date.getDate())" :class="{ 'day-valid': true, 'selected': isSelected(day.date.getDate()) }">
                 {{ day.date.getDate() }}
                 <div v-for=" duty in day.duties" class="dayDetails">
                     <!-- <div class="trashType">{{ duty.trashType }}</div> -->
@@ -119,6 +119,7 @@
                     <div class="person">{{ duty.team }}班 {{ duty.name }}</div>
                 </div>
             </div>
+            <div v-for="day in daysInNextMonth" class="day-invalid">{{ day.getDate() }}</div>
         </div>
     </div>
 
