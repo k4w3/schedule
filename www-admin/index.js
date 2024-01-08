@@ -214,18 +214,6 @@ const ManageApp = {
             currentMonth: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
             selectedDate: null,
             weekDayLabel: ["日", "月", "火", "水", "木", "金", "土"],
-            // members: [
-            //     {id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"},
-            //     {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"},
-            // ],
-            // weeklyScheduleConfs: [
-            //     {"id":1,"weekday":5,"weekord":2}, // 第2金曜日
-            //     {"id":2,"weekday":3,"weekord":1} // 第1水曜日
-            // ],
-            // dutyDays: [
-            //     "2024年5月1日",
-            //     "2024年6月1日",
-            // ],
         };
     },
     async mounted () {
@@ -246,9 +234,7 @@ const ManageApp = {
             for (let i = 1; i <= lastDay; i++) {
                 result.push(new Date(year, month, i));
             };
-            // console.log(result);
             return result;
-            // return new Date(year, month, 0).getDate();
         },
         monthLabel () {
             return this.currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -508,15 +494,4 @@ const ManageApp = {
 window.onload = function () {
     const app = Vue.createApp(ManageApp);
     app.mount('#app');
-    // const test = app.mount('#app');
-
-    // let conf = [
-    //     {"id":1,"weekday":5,"weekord":2}, // 第2金曜日
-    //     {"id":2,"weekday":3,"weekord":1} // 第1水曜日
-    // ];
-
-    // let days = test.getDaysInMonth(2023, 12 - 1, conf);
-    // days.forEach((day) => {
-    //     console.log(new Date(day));
-    // })
 };
