@@ -203,37 +203,68 @@ const DailyScheduleConfEditForm = {
     data () {
         return {
             showModal: false,
-            isDutyDay: false,
             date: "",
             diffType: "",
             trashType: "",
+            weeklyTrashTypeConfs: [],
+            dailyTrashTypeConfs: [],
         };
     },
     methods: {
-        async open (day) {
-            this.date = day.date;
-            this.$parent.selectedDate = new Date(this.$parent.currentMonth.getFullYear(), this.$parent.currentMonth.getMonth(), this.date.getDate());
-            if (day.duties.length) {
-                this.isDutyDay = true;
-                this.diffType = "2" // 打消差分
-                this.trashType = "0"
-
-                let confirm = window.confirm(
-                    this.date.toLocaleString('default', { day: 'numeric', month: 'long' }) + " のゴミ収集日を打ち消しますか？");
-                if (confirm) {
-                    await addTDailyScheduleConf(this.date, this.diffType, this.trashType);
-                    this.$parent.update();
+        update () {
+            this.getWeeklyScheduleConfs();
+            this.getDailyScheduleConfs();
+        },
+        getWeeklyScheduleConfs () {
+            let date = this.date;
+            let dutyDays = this.$parent.dutyDays;
+            let result = [];
+            for (let i = 0; i < dutyDays.length; i++) {
+                let dutyDay = dutyDays[i];
+                if (dutyDay.date.getTime() === date.getTime()) {
+                    result.push(dutyDay.trashType);
                 }
-            } else {
-                this.diffType = "1" // 追加差分
-                this.trashType = "1"
-                this.showModal = true;
             }
+            this.weeklyTrashTypeConfs = result;
+        },
+        getDailyScheduleConfs () {
+            let date = this.date;
+            let dailyScheduleConfs = this.$parent.dailyScheduleConfs;
+            let result = [];
+            for (let i = 0; i < dailyScheduleConfs.length; i++) {
+                let conf = dailyScheduleConfs[i];
+                if (Date.parse(conf.date) === date.getTime()) {
+                    let obj = {
+                        id: conf.id,
+                        trashType: this.$parent.getTrashTypeString(conf.trashType)
+                    }
+                    result.push(obj);
+                }
+            }
+            this.dailyTrashTypeConfs = result;
+        },
+        async denyScheduleConf (date) {
+            await addTDailyScheduleConf(date, 2, 0);
+        },
+        async addDailyScheduleConf (date, trashType) {
+            await addTDailyScheduleConf(date, 1, trashType);
+        },
+        async deleteDailyScheduleConf (id) {
+            await deleteTDailyScheduleConf(id);
+            this.$parent.update();
+            this.update();
+            // this.showModal = false;
+            // this.showModal = true;
+        },
+        open (day) {
+            this.date = day.date;
+            this.getWeeklyScheduleConfs();
+            this.getDailyScheduleConfs();
+            this.showModal = true;
         },
         close (event) {
             event.preventDefault();
             this.showModal = false;
-            this.isDutyDay = false;
         },
         async submit (event) {
             event.preventDefault();
@@ -245,21 +276,52 @@ const DailyScheduleConfEditForm = {
     template: `
 <div class="modal-overlay" v-show="showModal">
   <div class="modal-content">
-    <form>
-        <div>
-            ゴミの種類:
-            <label><input type="radio" v-model="trashType" value="1">燃えるゴミ</label>
-            <label><input type="radio" v-model="trashType" value="2">燃えないゴミ</label>
-            <label><input type="radio" v-model="trashType" value="3">その他</label>
-        </div>
-        <div>
-            <button type="button" v-on:click="submit">追加</button>
-            <button type="button" v-on:click="close">キャンセル</button>
-        </div>
-    </form>
+    <button type="button">追加</button>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>設定の種類</th>
+            <th>ゴミの種類</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in weeklyTrashTypeConfs">
+            <td>曜</td>
+            <td>{{ item }}</td>
+            <td><button type="button" v-on:click="denyScheduleConf(date)">打消</button></td>
+        </tr>
+        <tr v-for="item in dailyTrashTypeConfs">
+            <td>日</td>
+            <td>{{ item.trashType }}</td>
+            <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="text-align: center;">
+        <button type="button" v-on:click="close">キャンセル</button>
+    </div>
   </div>
 </div>
 `
+//     template: `
+// <div class="modal-overlay" v-show="showModal">
+//   <div class="modal-content">
+//     <form>
+//         <div>
+//             ゴミの種類:
+//             <label><input type="radio" v-model="trashType" value="1">燃えるゴミ</label>
+//             <label><input type="radio" v-model="trashType" value="2">燃えないゴミ</label>
+//             <label><input type="radio" v-model="trashType" value="3">その他</label>
+//         </div>
+//         <div>
+//             <button type="button" v-on:click="submit">追加</button>
+//             <button type="button" v-on:click="close">キャンセル</button>
+//         </div>
+//     </form>
+//   </div>
+// </div>
+// `
 };
 
 const ManageApp = {
@@ -267,6 +329,7 @@ const ManageApp = {
         let currentDate = new Date();
         return {
             weeklyScheduleConfs: [],
+            dailyScheduleConfs: [],
             dutyDays: [],
             members: [],
             firstMember: null,
@@ -275,12 +338,12 @@ const ManageApp = {
             calendarDays: [],
 
             currentMonth: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
-            selectedDate: null,
             weekDayLabel: ["日", "月", "火", "水", "木", "金", "土"],
         };
     },
     async mounted () {
         await this.loadWeeklyScheduleConf();
+        await this.loadDailyScheduleConf();
         this.calcDutyDays();
         await this.loadMembers();
         await this.loadFirstMember();
@@ -328,6 +391,7 @@ const ManageApp = {
     methods: {
         async update () {
             await this.loadWeeklyScheduleConf();
+            await this.loadDailyScheduleConf();
             this.calcDutyDays();
             await this.loadMembers();
             await this.loadFirstMember();
@@ -353,6 +417,16 @@ const ManageApp = {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
                 await deleteTWeeklyScheduleConf(id);
+                this.update();
+            };
+        },
+        async loadDailyScheduleConf () {
+            this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
+        },
+        async deleteDailyScheduleConf (id) {
+            let confirm = window.confirm("本当に削除してもいいですか？");
+            if (confirm) {
+                await deleteTDailyScheduleConf(id);
                 this.update();
             };
         },
@@ -527,17 +601,6 @@ const ManageApp = {
             }
             return distanceToWeekday + (7 * (weekord - 1));
         },
-        isSelected(day) {
-            return (
-                this.selectedDate &&
-                this.selectedDate.getFullYear() === this.currentMonth.getFullYear() &&
-                this.selectedDate.getMonth() === this.currentMonth.getMonth() &&
-                this.selectedDate.getDate() === day
-            );
-        },
-        // selectDate(day) {
-        //     this.selectedDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), day);
-        // },
         prevMonth() {
             this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
             this.calcCalendarDays();

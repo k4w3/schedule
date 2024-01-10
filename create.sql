@@ -42,7 +42,7 @@ insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 4);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 5);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(3, 3, 1);
 
-insert into TDailyScheduleConf (date, diffType, trashType) values('2024/1/1', 1, 3);
+insert into TDailyScheduleConf (date, diffType, trashType) values('Fri Jan 26 2024 00:00:00 GMT+0900 (日本標準時)', 1, 3);
 
 -- 1 追加差分
 -- 2 打消差分
