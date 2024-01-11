@@ -203,6 +203,7 @@ const DailyScheduleConfEditForm = {
     data () {
         return {
             showModal: false,
+            dailyScheduleConfs: [],
             date: "",
             diffType: "",
             trashType: "",
@@ -229,7 +230,7 @@ const DailyScheduleConfEditForm = {
         },
         getDailyScheduleConfs () {
             let date = this.date;
-            let dailyScheduleConfs = this.$parent.dailyScheduleConfs;
+            let dailyScheduleConfs = this.dailyScheduleConfs;
             let result = [];
             for (let i = 0; i < dailyScheduleConfs.length; i++) {
                 let conf = dailyScheduleConfs[i];
@@ -249,12 +250,16 @@ const DailyScheduleConfEditForm = {
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
         },
+        async loadDailyScheduleConf () {
+            this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
+        },
         async deleteDailyScheduleConf (id) {
-            await deleteTDailyScheduleConf(id);
-            this.$parent.update();
-            this.update();
-            // this.showModal = false;
-            // this.showModal = true;
+            let confirm = window.confirm("本当に削除してもいいですか？");
+            if (confirm) {
+                await deleteTDailyScheduleConf(id);
+                await this.$parent.update();
+                this.update();
+            };
         },
         open (day) {
             this.date = day.date;
@@ -329,7 +334,6 @@ const ManageApp = {
         let currentDate = new Date();
         return {
             weeklyScheduleConfs: [],
-            dailyScheduleConfs: [],
             dutyDays: [],
             members: [],
             firstMember: null,
@@ -417,16 +421,6 @@ const ManageApp = {
             let confirm = window.confirm("本当に削除してもいいですか？");
             if (confirm) {
                 await deleteTWeeklyScheduleConf(id);
-                this.update();
-            };
-        },
-        async loadDailyScheduleConf () {
-            this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
-        },
-        async deleteDailyScheduleConf (id) {
-            let confirm = window.confirm("本当に削除してもいいですか？");
-            if (confirm) {
-                await deleteTDailyScheduleConf(id);
                 this.update();
             };
         },
