@@ -212,7 +212,8 @@ const DailyScheduleConfEditForm = {
         };
     },
     methods: {
-        update () {
+        async update () {
+            await this.loadDailyScheduleConf();
             this.getWeeklyScheduleConfs();
             this.getDailyScheduleConfs();
         },
@@ -261,7 +262,8 @@ const DailyScheduleConfEditForm = {
                 this.update();
             };
         },
-        open (day) {
+        async open (day) {
+            await this.loadDailyScheduleConf();
             this.date = day.date;
             this.getWeeklyScheduleConfs();
             this.getDailyScheduleConfs();
@@ -347,7 +349,6 @@ const ManageApp = {
     },
     async mounted () {
         await this.loadWeeklyScheduleConf();
-        await this.loadDailyScheduleConf();
         this.calcDutyDays();
         await this.loadMembers();
         await this.loadFirstMember();
@@ -395,7 +396,6 @@ const ManageApp = {
     methods: {
         async update () {
             await this.loadWeeklyScheduleConf();
-            await this.loadDailyScheduleConf();
             this.calcDutyDays();
             await this.loadMembers();
             await this.loadFirstMember();
