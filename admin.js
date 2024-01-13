@@ -220,19 +220,15 @@ router.get("/api/TDailyScheduleConf", (context) => {
 
 router.get("/api/TDailyScheduleConf/date", (context) => {
     console.log("GET /api/TDailyScheduleConf/date");
-    // console.log(context.request);
-    // const params = await context.request.body({type:"form"}).value;
-    // console.log(params);
     const queryParams = getQuery(context, { mergeParams: true });
     console.log(queryParams);
 
     const db = new DB(dbName);
-    // let res = db.query("select * from TDailyScheduleConf WHERE date = ?", [params.get("date")]);
     let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDailyScheduleConf WHERE date = ?", [queryParams.date]);
 
     db.close();
     context.response.body = res;
-    console.log(res);
+    // console.log(res);
 });
 
 router.post("/api/TDailyScheduleConf", async (context) => {
