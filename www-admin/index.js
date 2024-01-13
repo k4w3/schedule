@@ -228,31 +228,12 @@ const DailyScheduleConfEditForm = {
             }
             this.weeklyTrashTypeConfs = result;
         },
-        // getDailyScheduleConfs () {
-        //     let date = this.date;
-        //     let dailyScheduleConfs = this.dailyScheduleConfs;
-        //     let result = [];
-        //     for (let i = 0; i < dailyScheduleConfs.length; i++) {
-        //         let conf = dailyScheduleConfs[i];
-        //         if (Date.parse(conf.date) === date.getTime()) {
-        //             let obj = {
-        //                 id: conf.id,
-        //                 trashType: this.$parent.getTrashTypeString(conf.trashType)
-        //             }
-        //             result.push(obj);
-        //         }
-        //     }
-        //     this.dailyTrashTypeConfs = result;
-        // },
         async denyScheduleConf (date) {
             await addTDailyScheduleConf(date, 2, 0);
         },
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
         },
-        // async loadDailyScheduleConf () {
-        //     this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
-        // },
         async loadDailyScheduleConfsForDay (date) {
             this.dailyScheduleConfs = JSON.parse(await getTDailyScheduleConf(date));
             console.log(this.dailyScheduleConfs);
@@ -300,7 +281,6 @@ const DailyScheduleConfEditForm = {
             <td>{{ item }}</td>
             <td><button type="button" v-on:click="denyScheduleConf(date)">打消</button></td>
         </tr>
-        <!-- tr v-for="item in dailyTrashTypeConfs" -->
         <tr v-for="item in dailyScheduleConfs">
             <td>日</td>
             <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
