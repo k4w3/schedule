@@ -208,14 +208,13 @@ const DailyScheduleConfEditForm = {
             diffType: "",
             trashType: "",
             weeklyTrashTypeConfs: [],
-            dailyTrashTypeConfs: [],
+            // dailyTrashTypeConfs: [],
         };
     },
     methods: {
         async update () {
-            await this.loadDailyScheduleConf();
+            await this.loadDailyScheduleConfsForDay(this.date);
             this.getWeeklyScheduleConfs();
-            this.getDailyScheduleConfs();
         },
         getWeeklyScheduleConfs () {
             let date = this.date;
@@ -229,30 +228,34 @@ const DailyScheduleConfEditForm = {
             }
             this.weeklyTrashTypeConfs = result;
         },
-        getDailyScheduleConfs () {
-            let date = this.date;
-            let dailyScheduleConfs = this.dailyScheduleConfs;
-            let result = [];
-            for (let i = 0; i < dailyScheduleConfs.length; i++) {
-                let conf = dailyScheduleConfs[i];
-                if (Date.parse(conf.date) === date.getTime()) {
-                    let obj = {
-                        id: conf.id,
-                        trashType: this.$parent.getTrashTypeString(conf.trashType)
-                    }
-                    result.push(obj);
-                }
-            }
-            this.dailyTrashTypeConfs = result;
-        },
+        // getDailyScheduleConfs () {
+        //     let date = this.date;
+        //     let dailyScheduleConfs = this.dailyScheduleConfs;
+        //     let result = [];
+        //     for (let i = 0; i < dailyScheduleConfs.length; i++) {
+        //         let conf = dailyScheduleConfs[i];
+        //         if (Date.parse(conf.date) === date.getTime()) {
+        //             let obj = {
+        //                 id: conf.id,
+        //                 trashType: this.$parent.getTrashTypeString(conf.trashType)
+        //             }
+        //             result.push(obj);
+        //         }
+        //     }
+        //     this.dailyTrashTypeConfs = result;
+        // },
         async denyScheduleConf (date) {
             await addTDailyScheduleConf(date, 2, 0);
         },
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
         },
-        async loadDailyScheduleConf () {
-            this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
+        // async loadDailyScheduleConf () {
+        //     this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
+        // },
+        async loadDailyScheduleConfsForDay (date) {
+            this.dailyScheduleConfs = JSON.parse(await getTDailyScheduleConf(date));
+            console.log(this.dailyScheduleConfs);
         },
         async deleteDailyScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
@@ -263,10 +266,9 @@ const DailyScheduleConfEditForm = {
             };
         },
         async open (day) {
-            await this.loadDailyScheduleConf();
             this.date = day.date;
+            await this.loadDailyScheduleConfsForDay(this.date);
             this.getWeeklyScheduleConfs();
-            this.getDailyScheduleConfs();
             this.showModal = true;
         },
         close (event) {
@@ -298,9 +300,10 @@ const DailyScheduleConfEditForm = {
             <td>{{ item }}</td>
             <td><button type="button" v-on:click="denyScheduleConf(date)">打消</button></td>
         </tr>
-        <tr v-for="item in dailyTrashTypeConfs">
+        <!-- tr v-for="item in dailyTrashTypeConfs" -->
+        <tr v-for="item in dailyScheduleConfs">
             <td>日</td>
-            <td>{{ item.trashType }}</td>
+            <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
             <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
         </tr>
         </tbody>

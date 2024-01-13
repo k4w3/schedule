@@ -247,14 +247,29 @@ function selectTDailyScheduleConf() {
     });
 };
 
-function getTDailyScheduleConf(id) {
+// function getTDailyScheduleConf(id) {
+//     return new Promise((resolve, reject) => {
+//         let req = new XMLHttpRequest();
+//         req.open("GET", "/api/TDailyScheduleConf/" + id);
+//         req.onload = (event) => {
+//             resolve(req.responseText);
+//         };
+//         req.send();
+//     });
+// };
+function getTDailyScheduleConf(date) {
     return new Promise((resolve, reject) => {
+
+        let params = "date=" + encodeURIComponent(date);
+        // console.log(params);
+
         let req = new XMLHttpRequest();
-        req.open("GET", "/api/TDailyScheduleConf/" + id);
+        req.open("GET", "/api/TDailyScheduleConf/date?" + params);
         req.onload = (event) => {
             resolve(req.responseText);
         };
         req.send();
+        // console.log(req);
     });
 };
 
