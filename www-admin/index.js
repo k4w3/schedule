@@ -203,21 +203,27 @@ const DailyScheduleConfEditForm = {
     data () {
         return {
             showModal: false,
+            // scheduleConfs: {},
+            scheduleConfs: {
+                weeklyScheduleConfs: [{trashType: "燃えるゴミ", isEnabled: true}, {trashType: "燃えないゴミ", isEnabled: false}],
+                dailyScheduleConfs: [{id: 1, diffType:1, trashType: 1}, {id: 2, diffType:2, trashType: 2}],
+            },
+            weeklyScheduleConfs: [],
             dailyScheduleConfs: [],
             date: "",
             diffType: "",
             trashType: "",
-            weeklyTrashTypeConfs: [],
-            // dailyTrashTypeConfs: [],
         };
     },
     methods: {
         async update () {
             await this.loadDailyScheduleConfsForDay(this.date);
-            this.getWeeklyScheduleConfs();
+            this.calcWeeklyScheduleConfs(this.date);
         },
-        getWeeklyScheduleConfs () {
-            let date = this.date;
+        // calcScheduleConfs () {
+
+        // },
+        calcWeeklyScheduleConfs (date) {
             let dutyDays = this.$parent.dutyDays;
             let result = [];
             for (let i = 0; i < dutyDays.length; i++) {
@@ -226,17 +232,17 @@ const DailyScheduleConfEditForm = {
                     result.push(dutyDay.trashType);
                 }
             }
-            this.weeklyTrashTypeConfs = result;
+            this.weeklyScheduleConfs = result;
         },
-        async denyScheduleConf (date) {
+        async loadDailyScheduleConfsForDay (date) {
+            this.dailyScheduleConfs = JSON.parse(await getTDailyScheduleConf(date));
+            // console.log(this.dailyScheduleConfs);
+        },
+        async denyWeeklyScheduleConf (date) {
             await addTDailyScheduleConf(date, 2, 0);
         },
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
-        },
-        async loadDailyScheduleConfsForDay (date) {
-            this.dailyScheduleConfs = JSON.parse(await getTDailyScheduleConf(date));
-            console.log(this.dailyScheduleConfs);
         },
         async deleteDailyScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
@@ -249,8 +255,10 @@ const DailyScheduleConfEditForm = {
         async open (day) {
             this.date = day.date;
             await this.loadDailyScheduleConfsForDay(this.date);
-            this.getWeeklyScheduleConfs();
+            this.calcWeeklyScheduleConfs(this.date);
             this.showModal = true;
+            console.log(this.weeklyScheduleConfs);
+            console.log(this.dailyScheduleConfs);
         },
         close (event) {
             event.preventDefault();
@@ -276,16 +284,34 @@ const DailyScheduleConfEditForm = {
         </tr>
         </thead>
         <tbody>
-        <tr v-for="item in weeklyTrashTypeConfs">
+
+        <!--
+        <tr v-for="item in weeklyScheduleConfs">
             <td>曜</td>
             <td>{{ item }}</td>
-            <td><button type="button" v-on:click="denyScheduleConf(date)">打消</button></td>
+            <td><button type="button" v-on:click="denyWeeklyScheduleConf(date)">打消</button></td>
         </tr>
         <tr v-for="item in dailyScheduleConfs">
             <td>日</td>
             <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
             <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
         </tr>
+        -->
+
+        <template v-for="item in scheduleConfs.weeklyScheduleConfs">
+        <tr v-if="item.isEnabled">
+            <td>曜</td>
+            <td>{{ item.trashType }}</td>
+            <td><button type="button" v-on:click="denyWeeklyScheduleConf(date)">打消</button></td>
+        </tr>
+        </template>
+        <template v-for="item in scheduleConfs.dailyScheduleConfs">
+        <tr v-if="item.diffType === 1">
+            <td>日</td>
+            <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
+            <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
+        </tr>
+        </template>
         </tbody>
     </table>
     <div style="text-align: center;">
