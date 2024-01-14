@@ -38,6 +38,7 @@ insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 5);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 1);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 2);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 3);
+insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 5, 4);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 4);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 5);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(3, 3, 1);
