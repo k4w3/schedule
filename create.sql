@@ -43,6 +43,7 @@ insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(2, 5, 5);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(3, 3, 1);
 
 insert into TDailyScheduleConf (date, diffType, trashType) values('Fri Jan 26 2024 00:00:00 GMT+0900 (日本標準時)', 1, 3);
+insert into TDailyScheduleConf (date, diffType, trashType) values('Fri Jan 26 2024 00:00:00 GMT+0900 (日本標準時)', 2, 2);
 insert into TDailyScheduleConf (date, diffType, trashType) values('Mon Jan 15 2024 00:00:00 GMT+0900 (日本標準時)', 1, 1);
 insert into TDailyScheduleConf (date, diffType, trashType) values('Tue Jan 16 2024 00:00:00 GMT+0900 (日本標準時)', 1, 2);
 insert into TDailyScheduleConf (date, diffType, trashType) values('Tue Jan 16 2024 00:00:00 GMT+0900 (日本標準時)', 1, 3);
