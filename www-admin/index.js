@@ -265,7 +265,7 @@ const DailyScheduleConfEditForm = {
             for (let i = 0; i < dutyDays.length; i++) {
                 let dutyDay = dutyDays[i];
                 if (dutyDay.date.getTime() === date.getTime()) {
-                    result.push(dutyDay.trashTypeNum);
+                    result.push(dutyDay.trashType);
                 }
             }
             this.weeklyScheduleConfs = result;
@@ -528,7 +528,7 @@ const ManageApp = {
                 let obj = {
                     date: dutyDay.date,
                     dateString: dutyDay.dateString,
-                    trashType: dutyDay.trashType,
+                    trashType: dutyDay.trashTypeString,
                     team: member.team,
                     name: member.name,
                     ruby: member.ruby};
@@ -605,7 +605,7 @@ const ManageApp = {
                 let date = dutyDay.getDate();
                 let weekday = this.getWeekdayString(dutyDay.getDay());
                 let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
-                dutyDays.push({date: dutyDay, dateString: dutyDayString, trashTypeNum: trashType,trashType: trashTypeString});
+                dutyDays.push({date: dutyDay, dateString: dutyDayString, trashType: trashType, trashTypeString: trashTypeString});
             })
             this.dutyDays = dutyDays;
         },
