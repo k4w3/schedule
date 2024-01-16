@@ -212,7 +212,6 @@ const DailyScheduleConfEditForm = {
             weeklyScheduleConfs: [],
             dailyScheduleConfs: [],
             date: "",
-            diffType: "",
             addTrashType: "1",
         };
     },
@@ -277,10 +276,12 @@ const DailyScheduleConfEditForm = {
         async denyWeeklyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 2, trashType);
             this.update();
+            this.$parent.update();
         },
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
             this.update();
+            this.$parent.update();
         },
         async deleteDailyScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
@@ -288,6 +289,7 @@ const DailyScheduleConfEditForm = {
                 await deleteTDailyScheduleConf(id);
                 await this.$parent.update();
                 this.update();
+                this.$parent.update();
             };
         },
         async open (day) {
@@ -303,12 +305,6 @@ const DailyScheduleConfEditForm = {
         close (event) {
             event.preventDefault();
             this.showModal = false;
-        },
-        async submit (event) {
-            event.preventDefault();
-            await addTDailyScheduleConf(this.date, this.diffType, this.trashType);
-            this.showModal = false;
-            this.$parent.update();
         },
     },
     template: `
