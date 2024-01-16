@@ -208,20 +208,81 @@ const DailyScheduleConfEditForm = {
             //     weeklyScheduleConfs: [{trashType: "燃えるゴミ", isEnabled: true}, {trashType: "燃えないゴミ", isEnabled: false}],
             //     dailyScheduleConfs: [{id: 1, diffType:1, trashType: 1}, {id: 2, diffType:2, trashType: 2}],
             // },
+            // scheduleConfs: [
+            //     {trashType: "燃えるゴミ", isEnabled: true},
+            //     {trashType: "燃えないゴミ", isEnabled: false},
+            //     {id: 1, diffType: 1, trashType: "燃えるゴミ"},
+            //     {id: 2, diffType: 2, trashType: "燃えないゴミ"},
+            // ],
+            // scheduleConfs: [
+            //     {type: "曜", trashType: "燃えるゴミ",},
+            //     {type: "曜", trashType: "燃えないゴミ", diffType: 2, dailyScheduleId: 1},
+            //     {type: "日", trashType: "その他", diffType: 1,dailyScheduleId: 2},
+            // ],
+            // scheduleConfs2: [
+            //     {type: 1, trashType: 1,},
+            //     {type: 1, trashType: 2, diffType: 2, dailyScheduleId: 1},
+            //     {type: 2, trashType: 3, diffType: 1, dailyScheduleId: 2},
+            // ],
+            scheduleConfs2: [],
             weeklyScheduleConfs: [],
+            weeklyScheduleConfs2: [],
             dailyScheduleConfs: [],
             date: "",
             diffType: "",
-            trashType: "",
+            addTrashType: "1",
         };
     },
     methods: {
         async update () {
             await this.loadDailyScheduleConfsForDay(this.date);
             this.calcWeeklyScheduleConfs(this.date);
+            this.calcWeeklyScheduleConfs2(this.date);
             this.calcScheduleConfs();
         },
         calcScheduleConfs () {
+            // scheduleConfs2: [
+            //     {type: 1, trashType: 1,},
+            //     {type: 1, trashType: 2, diffType: 2, dailyScheduleId: 1},
+            //     {type: 2, trashType: 3, diffType: 1, dailyScheduleId: 2},
+            // ],
+            // console.log(this.dailyScheduleConfs);
+        {
+            let result = [];
+
+            for (let i = 0; i < this.weeklyScheduleConfs2.length; i++) {
+                let type = 1;
+                let trashType = this.weeklyScheduleConfs2[i];
+                let uchikeshis = this.dailyScheduleConfs.filter((dConf) => {
+                    return dConf.diffType === 2 && dConf.trashType === trashType;
+                });
+                // console.log(uchikeshis);
+                if (uchikeshis.length > 0) {
+                    let diffType = 2;
+                    let dailyScheduleId = uchikeshis[0].id;
+                    result.push({type: type, trashType: trashType, diffType: diffType, dailyScheduleId: dailyScheduleId});
+                } else {
+                    result.push({type: type, trashType: trashType});
+                }
+            }
+            for (let i = 0; i < this.dailyScheduleConfs.length; i++) {
+                let type = 2;
+                let conf = this.dailyScheduleConfs[i];
+                if (conf.diffType === 1) {
+                    let diffType = 1;
+                    let trashType = conf.trashType;
+                    let dailyScheduleId = conf.id;
+                    result.push({type: type, trashType: trashType, diffType: diffType, dailyScheduleId: dailyScheduleId});
+                }
+            }
+            // result.push({type: 1, trashType: 1,});
+            // result.push({type: 1, trashType: 2, diffType: 2, dailyScheduleId: 1});
+            // result.push({type: 2, trashType: 3, diffType: 1, dailyScheduleId: 2});
+
+            this.scheduleConfs2 = result;
+        }
+
+
             let result = {};
             let w = [];
             let d = this.dailyScheduleConfs;
@@ -261,15 +322,28 @@ const DailyScheduleConfEditForm = {
             }
             this.weeklyScheduleConfs = result;
         },
+        calcWeeklyScheduleConfs2 (date) {
+            let dutyDays = this.$parent.dutyDays;
+            let result = [];
+            for (let i = 0; i < dutyDays.length; i++) {
+                let dutyDay = dutyDays[i];
+                if (dutyDay.date.getTime() === date.getTime()) {
+                    result.push(dutyDay.trashTypeNum);
+                }
+            }
+            this.weeklyScheduleConfs2 = result;
+        },
         async loadDailyScheduleConfsForDay (date) {
             this.dailyScheduleConfs = JSON.parse(await getTDailyScheduleConf(date));
             // console.log(this.dailyScheduleConfs);
         },
-        async denyWeeklyScheduleConf (date) {
-            await addTDailyScheduleConf(date, 2, 0);
+        async denyWeeklyScheduleConf (date, trashType) {
+            await addTDailyScheduleConf(date, 2, trashType);
+            this.update();
         },
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
+            this.update();
         },
         async deleteDailyScheduleConf (id) {
             let confirm = window.confirm("本当に削除してもいいですか？");
@@ -283,11 +357,12 @@ const DailyScheduleConfEditForm = {
             this.date = day.date;
             await this.loadDailyScheduleConfsForDay(this.date);
             this.calcWeeklyScheduleConfs(this.date);
+            this.calcWeeklyScheduleConfs2(this.date);
             this.calcScheduleConfs();
             this.showModal = true;
             // console.log(this.weeklyScheduleConfs);
             // console.log(this.dailyScheduleConfs);
-            console.log(this.scheduleConfs);
+            // console.log(this.scheduleConfs);
         },
         close (event) {
             event.preventDefault();
@@ -303,7 +378,14 @@ const DailyScheduleConfEditForm = {
     template: `
 <div class="modal-overlay" v-show="showModal">
   <div class="modal-content">
-    <button type="button">追加</button>
+    <div>
+        <select v-model="addTrashType">
+            <option value="1">燃えるゴミ</option>
+            <option value="2">燃えないゴミ</option>
+            <option value="3">その他</option>
+        </select>
+    <button type="button" v-on:click="addDailyScheduleConf(date, addTrashType)">追加</button>
+    </div>
     <table border="1">
         <thead>
         <tr>
@@ -327,6 +409,7 @@ const DailyScheduleConfEditForm = {
         </tr>
         -->
 
+<!--
         <template v-for="item in scheduleConfs.weeklyScheduleConfs">
         <tr v-if="item.isEnabled">
             <td>曜</td>
@@ -346,8 +429,27 @@ const DailyScheduleConfEditForm = {
             <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
         </tr>
         </template>
+-->
+
+        <template v-for="item in scheduleConfs2">
+        <tr>
+            <td v-if="item.type === 1">曜</td>
+            <td v-if="item.type === 2">日</td>
+            <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
+            <td v-if="!item.diffType"><button type="button" v-on:click="denyWeeklyScheduleConf(date, item.trashType)">打消</button></td>
+            <td v-if="item.diffType === 2"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId)">打消解除</button></td>
+            <td v-if="item.diffType === 1"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId)">削除</button></td>
+        </tr>
+        </template>
         </tbody>
     </table>
+
+    <template v-for="item in scheduleConfs2">
+    <div v-if="item.diffType !== 2">
+        {{ $parent.getTrashTypeString(item.trashType) }}
+    </div>
+    </template>
+
     <div style="text-align: center;">
         <button type="button" v-on:click="close">キャンセル</button>
     </div>
@@ -594,6 +696,7 @@ const ManageApp = {
             });
             let dutyDays = [];
             result.forEach((oItem) => {
+                let trashType = oItem.trashType;
                 let trashTypeString = this.getTrashTypeString(oItem.trashType);
                 let item = oItem.time;
                 let dutyDay = new Date(item);
@@ -602,7 +705,7 @@ const ManageApp = {
                 let date = dutyDay.getDate();
                 let weekday = this.getWeekdayString(dutyDay.getDay());
                 let dutyDayString = year + "年" + month + "月" + date + "日" + "(" + weekday + ")";
-                dutyDays.push({date: dutyDay, dateString: dutyDayString, trashType: trashTypeString});
+                dutyDays.push({date: dutyDay, dateString: dutyDayString, trashTypeNum: trashType,trashType: trashTypeString});
             })
             this.dutyDays = dutyDays;
         },
