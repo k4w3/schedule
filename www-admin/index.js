@@ -203,30 +203,13 @@ const DailyScheduleConfEditForm = {
     data () {
         return {
             showModal: false,
-            scheduleConfs: {},
-            // scheduleConfs: {
-            //     weeklyScheduleConfs: [{trashType: "燃えるゴミ", isEnabled: true}, {trashType: "燃えないゴミ", isEnabled: false}],
-            //     dailyScheduleConfs: [{id: 1, diffType:1, trashType: 1}, {id: 2, diffType:2, trashType: 2}],
-            // },
             // scheduleConfs: [
-            //     {trashType: "燃えるゴミ", isEnabled: true},
-            //     {trashType: "燃えないゴミ", isEnabled: false},
-            //     {id: 1, diffType: 1, trashType: "燃えるゴミ"},
-            //     {id: 2, diffType: 2, trashType: "燃えないゴミ"},
-            // ],
-            // scheduleConfs: [
-            //     {type: "曜", trashType: "燃えるゴミ",},
-            //     {type: "曜", trashType: "燃えないゴミ", diffType: 2, dailyScheduleId: 1},
-            //     {type: "日", trashType: "その他", diffType: 1,dailyScheduleId: 2},
-            // ],
-            // scheduleConfs2: [
             //     {type: 1, trashType: 1,},
             //     {type: 1, trashType: 2, diffType: 2, dailyScheduleId: 1},
             //     {type: 2, trashType: 3, diffType: 1, dailyScheduleId: 2},
             // ],
-            scheduleConfs2: [],
+            scheduleConfs: [],
             weeklyScheduleConfs: [],
-            weeklyScheduleConfs2: [],
             dailyScheduleConfs: [],
             date: "",
             diffType: "",
@@ -237,22 +220,20 @@ const DailyScheduleConfEditForm = {
         async update () {
             await this.loadDailyScheduleConfsForDay(this.date);
             this.calcWeeklyScheduleConfs(this.date);
-            this.calcWeeklyScheduleConfs2(this.date);
             this.calcScheduleConfs();
         },
         calcScheduleConfs () {
-            // scheduleConfs2: [
+            // scheduleConfs: [
             //     {type: 1, trashType: 1,},
             //     {type: 1, trashType: 2, diffType: 2, dailyScheduleId: 1},
             //     {type: 2, trashType: 3, diffType: 1, dailyScheduleId: 2},
             // ],
             // console.log(this.dailyScheduleConfs);
-        {
             let result = [];
 
-            for (let i = 0; i < this.weeklyScheduleConfs2.length; i++) {
+            for (let i = 0; i < this.weeklyScheduleConfs.length; i++) {
                 let type = 1;
-                let trashType = this.weeklyScheduleConfs2[i];
+                let trashType = this.weeklyScheduleConfs[i];
                 let uchikeshis = this.dailyScheduleConfs.filter((dConf) => {
                     return dConf.diffType === 2 && dConf.trashType === trashType;
                 });
@@ -275,40 +256,7 @@ const DailyScheduleConfEditForm = {
                     result.push({type: type, trashType: trashType, diffType: diffType, dailyScheduleId: dailyScheduleId});
                 }
             }
-            // result.push({type: 1, trashType: 1,});
-            // result.push({type: 1, trashType: 2, diffType: 2, dailyScheduleId: 1});
-            // result.push({type: 2, trashType: 3, diffType: 1, dailyScheduleId: 2});
 
-            this.scheduleConfs2 = result;
-        }
-
-
-            let result = {};
-            let w = [];
-            let d = this.dailyScheduleConfs;
-
-            for (let i = 0; i < this.weeklyScheduleConfs.length; i++) {
-                let wTrashType = this.weeklyScheduleConfs[i];
-                let obj = {};
-                obj["trashType"] = wTrashType;
-
-                for (let j = 0; j < this.dailyScheduleConfs.length; j++) {
-                    let dDiffType  = this. dailyScheduleConfs[j].diffType;
-                    if (dDiffType !== 2) {
-                        obj["isEnabled"] = true;
-                        continue;
-                    }
-                    let dTrashType = this.$parent.getTrashTypeString(this.dailyScheduleConfs[j].trashType);
-                    if (wTrashType === dTrashType) {
-                        obj["isEnabled"] = false;
-                        break;
-                    };
-                }
-
-                w.push(obj);
-            }
-            result["weeklyScheduleConfs"] = w;
-            result["dailyScheduleConfs"] = d;
             this.scheduleConfs = result;
         },
         calcWeeklyScheduleConfs (date) {
@@ -317,21 +265,10 @@ const DailyScheduleConfEditForm = {
             for (let i = 0; i < dutyDays.length; i++) {
                 let dutyDay = dutyDays[i];
                 if (dutyDay.date.getTime() === date.getTime()) {
-                    result.push(dutyDay.trashType);
-                }
-            }
-            this.weeklyScheduleConfs = result;
-        },
-        calcWeeklyScheduleConfs2 (date) {
-            let dutyDays = this.$parent.dutyDays;
-            let result = [];
-            for (let i = 0; i < dutyDays.length; i++) {
-                let dutyDay = dutyDays[i];
-                if (dutyDay.date.getTime() === date.getTime()) {
                     result.push(dutyDay.trashTypeNum);
                 }
             }
-            this.weeklyScheduleConfs2 = result;
+            this.weeklyScheduleConfs = result;
         },
         async loadDailyScheduleConfsForDay (date) {
             this.dailyScheduleConfs = JSON.parse(await getTDailyScheduleConf(date));
@@ -357,7 +294,6 @@ const DailyScheduleConfEditForm = {
             this.date = day.date;
             await this.loadDailyScheduleConfsForDay(this.date);
             this.calcWeeklyScheduleConfs(this.date);
-            this.calcWeeklyScheduleConfs2(this.date);
             this.calcScheduleConfs();
             this.showModal = true;
             // console.log(this.weeklyScheduleConfs);
@@ -395,43 +331,7 @@ const DailyScheduleConfEditForm = {
         </tr>
         </thead>
         <tbody>
-
-        <!--
-        <tr v-for="item in weeklyScheduleConfs">
-            <td>曜</td>
-            <td>{{ item }}</td>
-            <td><button type="button" v-on:click="denyWeeklyScheduleConf(date)">打消</button></td>
-        </tr>
-        <tr v-for="item in dailyScheduleConfs">
-            <td>日</td>
-            <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
-            <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
-        </tr>
-        -->
-
-<!--
-        <template v-for="item in scheduleConfs.weeklyScheduleConfs">
-        <tr v-if="item.isEnabled">
-            <td>曜</td>
-            <td>{{ item.trashType }}</td>
-            <td><button type="button" v-on:click="denyWeeklyScheduleConf(date)">打消</button></td>
-        </tr>
-        <tr v-else>
-            <td>曜</td>
-            <td>{{ item.trashType }}</td>
-            <td><button type="button" v-on:click="denyWeeklyScheduleConf(date)">復元</button></td>
-        </tr>
-        </template>
-        <template v-for="item in scheduleConfs.dailyScheduleConfs">
-        <tr v-if="item.diffType === 1">
-            <td>日</td>
-            <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
-            <td><button type="button" v-on:click="deleteDailyScheduleConf(item.id)">削除</button></td>
-        </tr>
-        </template>
--->
-
-        <template v-for="item in scheduleConfs2">
+        <template v-for="item in scheduleConfs">
         <tr>
             <td v-if="item.type === 1">曜</td>
             <td v-if="item.type === 2">日</td>
@@ -444,7 +344,7 @@ const DailyScheduleConfEditForm = {
         </tbody>
     </table>
 
-    <template v-for="item in scheduleConfs2">
+    <template v-for="item in scheduleConfs">
     <div v-if="item.diffType !== 2">
         {{ $parent.getTrashTypeString(item.trashType) }}
     </div>
