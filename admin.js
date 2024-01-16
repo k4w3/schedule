@@ -231,6 +231,30 @@ router.get("/api/TDailyScheduleConf/date", (context) => {
     // console.log(res);
 });
 
+router.post("/kameyama/test", async (context) => {
+    // console.log("POST /api/TDailyScheduleConf");
+    // const params = await context.request.body({type:"form"}).value;
+    const params = await context.request.body({type:"text"}).value;
+    console.log(params);
+
+    // const db = new DB(dbName);
+    // db.query("INSERT INTO TDailyScheduleConf (date, diffType, trashType) VALUES (?,?,?)",
+    // [params.get("date"), params.get("diffType"), params.get("trashType")]);
+    // db.close();
+    // context.response.body = "OK";
+    context.response.body = '<html><body><div style="color:red;">foo</div></body></html>';
+});
+
+router.get("/kameyama/test", async (context) => {
+    const queryParams = getQuery(context, { mergeParams: true });
+    // const params = await context.request.body({type:"form"}).value;
+    // const params = await context.request.body({type:"text"}).value;
+    console.log(queryParams);
+
+    // context.response.body = "OK";
+    context.response.body = '<html><body><div style="color:red;">foo</div></body></html>';
+});
+
 router.post("/api/TDailyScheduleConf", async (context) => {
     console.log("POST /api/TDailyScheduleConf");
     const params = await context.request.body({type:"form"}).value;
