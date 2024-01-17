@@ -263,7 +263,7 @@ const DailyScheduleConfEditForm = {
             let result = [];
             for (let i = 0; i < dutyDays.length; i++) {
                 let dutyDay = dutyDays[i];
-                if (dutyDay.date.getTime() === date.getTime()) {
+                if (dutyDay.date.getTime() === date) {
                     result.push(dutyDay.trashType);
                 }
             }
@@ -293,7 +293,7 @@ const DailyScheduleConfEditForm = {
             };
         },
         async open (day) {
-            this.date = day.date;
+            this.date = day.date.getTime();
             await this.loadDailyScheduleConfsForDay(this.date);
             this.calcWeeklyScheduleConfs(this.date);
             this.calcScheduleConfs();
