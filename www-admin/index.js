@@ -274,17 +274,25 @@ const DailyScheduleConfEditForm = {
             // console.log(this.dailyScheduleConfs);
         },
         async denyWeeklyScheduleConf (date, trashType) {
-            await addTDailyScheduleConf(date, 2, trashType);
-            this.update();
-            this.$parent.update();
+            let confirm = window.confirm("設定を打ち消しますか？");
+            if (confirm) {
+                await addTDailyScheduleConf(date, 2, trashType);
+                this.update();
+                this.$parent.update();
+            };
         },
         async addDailyScheduleConf (date, trashType) {
             await addTDailyScheduleConf(date, 1, trashType);
             this.update();
             this.$parent.update();
         },
-        async deleteDailyScheduleConf (id) {
-            let confirm = window.confirm("本当に削除してもいいですか？");
+        async deleteDailyScheduleConf (id, diffType) {
+            let confirm = "";
+            if (diffType === 1) {
+                confirm = window.confirm("設定を削除しますか？");
+            } else if (diffType === 2){
+                confirm = window.confirm("設定の打ち消しを解除しますか？");
+            };
             if (confirm) {
                 await deleteTDailyScheduleConf(id);
                 await this.$parent.update();
@@ -333,8 +341,8 @@ const DailyScheduleConfEditForm = {
             <td v-if="item.type === 2">日</td>
             <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
             <td v-if="!item.diffType"><button type="button" v-on:click="denyWeeklyScheduleConf(date, item.trashType)">打消</button></td>
-            <td v-if="item.diffType === 2"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId)">打消解除</button></td>
-            <td v-if="item.diffType === 1"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId)">削除</button></td>
+            <td v-if="item.diffType === 2"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId, item.diffType)">打消解除</button></td>
+            <td v-if="item.diffType === 1"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId, item.diffType)">削除</button></td>
         </tr>
         </template>
         </tbody>
