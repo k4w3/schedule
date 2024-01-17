@@ -218,7 +218,7 @@ const DailyScheduleConfEditForm = {
     methods: {
         async update () {
             await this.loadDailyScheduleConfsForDay(this.date);
-            this.calcWeeklyScheduleConfs(this.date);
+            this.calcWeeklyScheduleConfsForDay(this.date);
             this.calcScheduleConfs();
         },
         calcScheduleConfs () {
@@ -258,7 +258,7 @@ const DailyScheduleConfEditForm = {
 
             this.scheduleConfs = result;
         },
-        calcWeeklyScheduleConfs (date) {
+        calcWeeklyScheduleConfsForDay (date) {
             let dutyDays = this.$parent.dutyDays;
             let result = [];
             for (let i = 0; i < dutyDays.length; i++) {
@@ -303,7 +303,7 @@ const DailyScheduleConfEditForm = {
         async open (day) {
             this.date = day.date.getTime();
             await this.loadDailyScheduleConfsForDay(this.date);
-            this.calcWeeklyScheduleConfs(this.date);
+            this.calcWeeklyScheduleConfsForDay(this.date);
             this.calcScheduleConfs();
             this.showModal = true;
             // console.log(this.weeklyScheduleConfs);
