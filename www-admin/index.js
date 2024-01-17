@@ -319,6 +319,7 @@ const DailyScheduleConfEditForm = {
 <div class="modal-overlay" v-show="showModal">
   <div class="modal-content">
     <div>
+        <h3 style="border-bottom: 1px solid">追加</h3>
         <select v-model="addTrashType">
             <option value="1">燃えるゴミ</option>
             <option value="2">燃えないゴミ</option>
@@ -326,11 +327,15 @@ const DailyScheduleConfEditForm = {
         </select>
     <button type="button" v-on:click="addDailyScheduleConf(date, addTrashType)">追加</button>
     </div>
+
+    <div>
+    <h3 style="border-bottom: 1px solid">編集</h3>
     <table border="1">
         <thead>
         <tr>
             <th>設定の種類</th>
             <th>ゴミの種類</th>
+            <th>状態</th>
             <th></th>
         </tr>
         </thead>
@@ -340,6 +345,8 @@ const DailyScheduleConfEditForm = {
             <td v-if="item.type === 1">曜</td>
             <td v-if="item.type === 2">日</td>
             <td>{{ $parent.getTrashTypeString(item.trashType) }}</td>
+            <td v-if="!item.diffType || item.diffType === 1">ON</td>
+            <td v-if="item.diffType === 2">OFF</td>
             <td v-if="!item.diffType"><button type="button" v-on:click="denyWeeklyScheduleConf(date, item.trashType)">打消</button></td>
             <td v-if="item.diffType === 2"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId, item.diffType)">打消解除</button></td>
             <td v-if="item.diffType === 1"><button type="button" v-on:click="deleteDailyScheduleConf(item.dailyScheduleId, item.diffType)">削除</button></td>
@@ -347,12 +354,18 @@ const DailyScheduleConfEditForm = {
         </template>
         </tbody>
     </table>
+    </div>
 
+    <div>
+    <h3 style="border-bottom: 1px solid">結果</h3>
     <template v-for="item in scheduleConfs">
     <div v-if="item.diffType !== 2">
-        {{ $parent.getTrashTypeString(item.trashType) }}
+        <ul>
+            <li>{{ $parent.getTrashTypeString(item.trashType) }}</li>
+        </ul>
     </div>
     </template>
+    </div>
 
     <div style="text-align: center;">
         <button type="button" v-on:click="close">キャンセル</button>
