@@ -300,7 +300,8 @@ app.use(async (context, next) => {
     try {
         await context.send({
             root: `${Deno.cwd()}/www-admin`,
-            index: "index.html",
+            // index: "index.html",
+            index: "index2.html",
         });
     } catch {
         await next();

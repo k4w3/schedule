@@ -8,9 +8,11 @@ function calcCalendarDays (daysInMonth, arrDuties) {
     let result = [];
     for (let i = 0; i < daysInMonth.length; i++) {
         let day = daysInMonth[i];
-        const duties = arrDuties.filter((duty) => duty.date === day);
+        const duties = arrDuties.filter((duty) => {
+            return duty.date === day
+        });
         let obj = {
-            date: day,
+            date: new Date(day),
             duties: duties,
         };
         result.push(obj);
