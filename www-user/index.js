@@ -1,54 +1,147 @@
-const DutyDaysList = {
-    template: `
-<div>
-<h2>すべての当番日</h2>
-<table border="1">
-    <thead>
-    <tr>
-        <th>当番日</th>
-        <th>班</th>
-        <th>名前</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr v-for="(dutyDay, index) in this.$parent.dutyDays">
-        <td>{{dutyDay}}</td>
-        <td>{{this.$parent.members[index % this.$parent.members.length].team}}</td>
-        <td>{{this.$parent.members[index % this.$parent.members.length].name}}</td>
-    </tr>
-    </tbody>
-</table>
-</div>
-`
-};
-
-const ScheduleApp = {
+const UserApp = {
     data () {
+        let currentDate = new Date();
         return {
-            myName: "山田 太郎",
-            nextDutyDay: "2024年4月1日",
-            members: [{id: 1, team: 1, name: "山田 太郎", ruby: "タロウ"}, {id: 2, team: 1, name: "佐藤 次郎", ruby: "ジロウ"}, {id: 3, team: 2, name: "鈴木 三郎", ruby: "サブロウ"}],
-            dutyDays: ["2024年5月1日", "2024年6月1日", "2024年7月1日", "2024年8月1日", "2024年9月1日", "2024年10月1日", "2024年11月1日", "2024年12月1日", "2025年1月1日", "2025年2月1日", "2025年3月1日"],
-        };
-        // return {
-        //     myName: "",
-        //     nextDutyDay: "",
-        //     members: [],
-        //     dutyDays: [],
-        // };
-    },
-    mounted () {
+            days: 0,
+            nYear: 1,
+            scheduleConfs: [],
+            weeklyScheduleConfs: [],
+            dailyScheduleConfs: [],
+            dutyDays: [],
+            members: [],
+            firstMember: null,
+            sortedMembers: [],
+            duties: [],
+            calendarDays: [],
 
+            currentMonth: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+            weekDayLabel: ["日", "月", "火", "水", "木", "金", "土"],
+        };
+    },
+    async mounted () {
+        this.days = calcDaysInNYear(this.nYear);
+        await this.loadWeeklyScheduleConf();
+        await this.loadDailyScheduleConf();
+        this.scheduleConfs = calcScheduleConfs(this.weeklyScheduleConfs, this.dailyScheduleConfs, this.days);
+        this.dutyDays = calcDutyDays(this.scheduleConfs);
+        await this.loadMembers();
+        await this.loadFirstMember();
+        this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
+        this.duties = calcDuties(this.dutyDays, this.sortedMembers);
+        this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
+    },
+    computed: {
+        daysInMonth() {
+            let result = [];
+            const year = this.currentMonth.getFullYear();
+            const month = this.currentMonth.getMonth();
+            const lastDay = new Date(year, month + 1, 0).getDate();
+            for (let i = 1; i <= lastDay; i++) {
+                result.push(new Date(year, month, i).getTime());
+            };
+            return result;
+        },
+        monthLabel () {
+            return this.currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+        },
+        daysInPrevMonth () {
+            let result = [];
+            let firstDayOfCurrentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
+            let weekdayOfFirstDay = firstDayOfCurrentMonth.getDay();
+            let prevDay = firstDayOfCurrentMonth;
+            for (let i = weekdayOfFirstDay; i > 0; i--) {
+                prevDay = new Date(firstDayOfCurrentMonth.getFullYear(), firstDayOfCurrentMonth.getMonth() ,firstDayOfCurrentMonth.getDate() - i);
+                result.push(prevDay);
+            };
+            return result;
+        },
+        daysInNextMonth () {
+            let result = [];
+            let lastDayOfCurrentMonth  = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 0);
+            let weekdayOfLastDay = lastDayOfCurrentMonth.getDay();
+            let nextDay = lastDayOfCurrentMonth;
+            for (let i = 1; i < (7 - weekdayOfLastDay); i++) {
+                nextDay = new Date(lastDayOfCurrentMonth.getFullYear(), lastDayOfCurrentMonth.getMonth(), lastDayOfCurrentMonth.getDate() + i);
+                result.push(nextDay);
+            };
+            return result;
+        },
     },
     methods: {
-    },
-    components: {
-        DutyDaysList,
+        async update () {
+            let nYear = 1;
+            this.days = calcDaysInNYear(nYear);
+            await this.loadWeeklyScheduleConf();
+            await this.loadDailyScheduleConf();
+            this.scheduleConfs = calcScheduleConfs(this.weeklyScheduleConfs, this.dailyScheduleConfs, this.days);
+            this.dutyDays = calcDutyDays(this.scheduleConfs);
+            await this.loadMembers();
+            await this.loadFirstMember();
+            this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
+            this.duties = calcDuties(this.dutyDays, this.sortedMembers);
+            this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
+        },
+        async loadMembers () {
+            this.members = JSON.parse(await selectTMembers());
+        },
+        async loadWeeklyScheduleConf () {
+            this.weeklyScheduleConfs = JSON.parse(await selectTWeeklyScheduleConf());
+        },
+        async loadDailyScheduleConf () {
+            this.dailyScheduleConfs = JSON.parse(await selectTDailyScheduleConf());
+        },
+        async loadFirstMember () {
+            this.firstMember = JSON.parse(await getTFirstMember());
+        },
+        prevMonth() {
+            this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
+            this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
+        },
+        nextMonth() {
+            this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
+            this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
+        },
+        getTrashTypeString (trashType) {
+            switch (trashType) {
+                case 1:
+                    return "燃えるゴミ";
+                case 2:
+                    return "燃えないゴミ";
+                case 3:
+                    return "その他";
+                default:
+                    return "不明";
+            }
+        },
+        /**
+        * 曜日を文字列にして返す
+        * @param {*} weekday - 曜日
+        * @return 曜日の文字列
+        */
+        getWeekdayString (weekday) {
+            switch (weekday) {
+                case 0:
+                    return "日";
+                case 1:
+                    return "月";
+                case 2:
+                    return "火";
+                case 3:
+                    return "水";
+                case 4:
+                    return "木";
+                case 5:
+                    return "金";
+                case 6:
+                    return "土";
+                default:
+                    return "不明";
+            }
+        },
     },
 };
 
 window.onload = function () {
-    console.log("hello");
-    const app = Vue.createApp(ScheduleApp);
+    const app = Vue.createApp(UserApp);
     app.mount('#app');
 };
