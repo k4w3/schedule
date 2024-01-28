@@ -3,20 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ゴミ当番</title>
+    <title>ゴミ収集場所準備当番</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
     <script type="text/javascript" src="https://unpkg.com/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <script src="./database.js"></script>
+    <script src="./schedule.js"></script>
     <script src="./index.js"></script>
 </head>
-<body id="app">
-    <div><h1>{{myName}}さん</h1></div>
-    <div><h2>次のあなたのゴミステーション掃除当番は <span style="font-size: 1.5em;">{{nextDutyDay}}</span> です。</h2></div>
-    <div>
-        <h4>次回以降は
-        <!-- ここはまだ適当に出してるだけ -->
-            <span v-for="(dutyday, index) in dutyDays">{{dutyday}}<span v-if="index !== dutyDays.length - 1">, </span></span>
-            です。
-        </h4>
+<body id="app" v-cloak>
+    <h1>ユーザー画面</h1>
+
+    <h2 style="border-bottom: 1px solid">当番カレンダー</h2>
+    <div class="calendar" v-if="sortedMembers.length > 0">
+        <div>
+            <button v-on:click="prevMonth">&lt;</button>
+            {{ monthLabel }}
+            <button v-on:click="nextMonth">&gt;</button>
+        </div>
+        <div class="days">
+            <div v-for="w in weekDayLabel">{{ w }}</div>
+            <div v-for="day in daysInPrevMonth" class="day-invalid">{{ day.getDate() }}</div>
+            <div v-for="day in calendarDays" class="day-valid">
+                {{ day.date.getDate() }}
+                <div v-for=" duty in day.duties" class="dayDetails">
+                    <!-- <div class="trashType">{{ duty.trashType }}</div> -->
+                    <div v-bind:class="{ 'trashType': true, 'burnable': duty.trashType === '燃えるゴミ', 'non-burnable': duty.trashType === '燃えないゴミ'}">{{ duty.trashType }}</div>
+                    <div class="person">{{ duty.team }}班 {{ duty.name }}</div>
+                </div>
+            </div>
+            <div v-for="day in daysInNextMonth" class="day-invalid">{{ day.getDate() }}</div>
+        </div>
     </div>
-    <duty-days-list ref="dutyDaysList"></duty-days-list>
+
+    <h2 style="border-bottom: 1px solid">当番表</h2>
+    </div>
+    <div>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>当番日</th>
+                <th>ゴミの種類</th>
+                <th>班</th>
+                <th>名前</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="duty in duties">
+                <td>{{ duty.dateString }}</td>
+                <td>{{ duty.trashType }}</td>
+                <td>{{ duty.team }}</td>
+                <td>{{ duty.name }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
 </body>
 </html>

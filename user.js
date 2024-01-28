@@ -6,12 +6,47 @@ console.log("start");
 
 
 const router = new Router();
+const dbName = "schedule.db";
+
+router.get("/api/TMembers/firstMember", (context) => {
+    console.log("GET /api/TMembers/firstMember");
+    const db = new DB(dbName);
+    let confFirstMemberIds = db.queryEntries("SELECT id FROM TFirstMember");
+    console.log(confFirstMemberIds);
+
+    let res;
+    if (confFirstMemberIds.length) {
+        let confFirstMemberId = confFirstMemberIds[0].id;
+        let confFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [confFirstMemberId]);
+        if (confFirstMembers.length) {
+            res = {
+                confMemberId: confFirstMembers[0].id,
+                calcMember: confFirstMembers[0]
+            }
+        } else {
+            let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+            res = {
+                confMemberId: confFirstMemberIds[0].id,
+                calcMember: calcFirstMembers[0]
+            }
+        }
+    } else {
+        let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
+        res = {
+            confMemberId: 0,
+            calcMember: calcFirstMembers[0]
+        }
+    }
+
+    db.close();
+    context.response.body = res;
+});
 
 router.get("/api/TMembers", (context) => {
     console.log("GET /api/TMembers");
-    const db = new DB("schedule.db");
+    const db = new DB(dbName);
     // let res = db.query("SELECT * FROM TMembers");
-    let res = db.queryEntries("SELECT id, team, name, ruby FROM TMembers");
+    let res = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord");
 
     db.close();
     context.response.body = res;
@@ -22,48 +57,69 @@ router.get("/api/TMembers/:id", (context) => {
     const queryParams = getQuery(context, { mergeParams: true });
     console.log(queryParams);
 
-    const db = new DB("schedule.db");
-    let res = db.queryEntries("SELECT id, team, name, ruby FROM TMembers WHERE id=?", [queryParams.id]);
+    const db = new DB(dbName);
+    let res = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [queryParams.id]);
+    db.close();
+    if (res.length > 0) {
+        context.response.body = res[0];
+    } else {
+        context.response.headers.set("content-type", "application/json; charset=UTF-8");
+        context.response.body = "null";
+    }
+});
+
+
+
+router.get("/api/TWeeklyScheduleConf", (context) => {
+    console.log("GET /api/TWeeklyScheduleConf");
+    const db = new DB(dbName);
+    // let res = db.query("SELECT * FROM TWeeklyScheduleConf");
+    let res = db.queryEntries("SELECT id, trashType, weekday, weekord FROM TWeeklyScheduleConf ORDER BY id");
+
     db.close();
     context.response.body = res;
 });
 
-router.post("/api/TMembers", async (context) => {
-    console.log("POST /api/TMembers");
-    const params = await context.request.body({type:"form"}).value;
-
-    const db = new DB("schedule.db");
-    db.query("INSERT INTO TMembers (team, name, done) VALUES (?,?,?)",
-    [params.get("team"), params.get("name"), params.get("ruby")]);
-    db.close();
-    context.response.body = "OK";
-});
-
-router.put("/api/TMembers/:id", async (context) => {
-    console.log("put /api/TMembers");
-    const queryParams = getQuery(context, { mergeParams: true });
-    const postParams = await context.request.body({type:"form"}).value;
-    console.log(queryParams);
-    console.log(postParams);
-
-    const db = new DB("schedule.db");
-    db.query("UPDATE TMembers SET team=? name=?, ruby=? WHERE id=?",
-    [postParams.get("team"), postParams.get("name"), postParams.get("ruby"), queryParams.id]);
-    db.close();
-    context.response.body = "OK";
-});
-
-router.delete("/api/TMembers/:id", async (context) => {
-    console.log("delete /api/TMembers");
+router.get("/api/TWeeklyScheduleConf/:id", (context) => {
+    console.log("GET /api/TWeeklyScheduleConf:id");
     const queryParams = getQuery(context, { mergeParams: true });
     console.log(queryParams);
 
-    const db = new DB("schedule.db");
-    db.query("DELETE FROM TMembers WHERE id=?",
-    [queryParams.id]);
+    const db = new DB(dbName);
+    let res = db.queryEntries("SELECT id, trashType, weekday, weekord FROM TWeeklyScheduleConf WHERE id=?", [queryParams.id]);
     db.close();
-    context.response.body = "OK";
+    if (res.length > 0) {
+        context.response.body = res[0];
+    } else {
+        context.response.headers.set("content-type", "application/json; charset=UTF-8");
+        context.response.body = "null";
+    }
 });
+
+
+
+router.get("/api/TDailyScheduleConf", (context) => {
+    console.log("GET /api/TWeeklyScheduleConf");
+    const db = new DB(dbName);
+    let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDailyScheduleConf ORDER BY id");
+
+    db.close();
+    context.response.body = res;
+});
+
+router.get("/api/TDailyScheduleConf/date", (context) => {
+    console.log("GET /api/TDailyScheduleConf/date");
+    const queryParams = getQuery(context, { mergeParams: true });
+    console.log(queryParams);
+
+    const db = new DB(dbName);
+    let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDailyScheduleConf WHERE date = ?", [queryParams.date]);
+
+    db.close();
+    context.response.body = res;
+    // console.log(res);
+});
+
 
 
 const app = new Application();
