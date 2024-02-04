@@ -36,6 +36,12 @@
     </div>
 
     <h2 style="border-bottom: 1px solid">当番表</h2>
+    <div style="margin: 10px;">
+        <form onsubmit="return false;">
+            <input type="text" v-model="findName">
+            <!-- <button type="button" v-on:click="calcDutiesList(duties, findName)">検索</button> -->
+            <button type="button" v-on:click="find">検索</button>
+        </form>
     </div>
     <div>
         <table border="1">
@@ -48,7 +54,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="duty in duties">
+            <tr v-for="duty in dutiesList">
                 <td>{{ duty.dateString }}</td>
                 <td>{{ duty.trashType }}</td>
                 <td>{{ duty.team }}</td>
