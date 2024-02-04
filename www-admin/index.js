@@ -199,6 +199,69 @@ const FirstMemberEditForm = {
 `
 }
 
+const DailyScheduleConfEditForm = {
+    data () {
+        return {
+            showModal: false,
+            isDutyDay: false,
+            date: "",
+            diffType: "",
+            trashType: "",
+        };
+    },
+    methods: {
+        async open (day) {
+            this.date = day.date;
+            this.$parent.selectedDate = new Date(this.$parent.currentMonth.getFullYear(), this.$parent.currentMonth.getMonth(), this.date.getDate());
+            if (day.duties.length) {
+                this.isDutyDay = true;
+                this.diffType = "2" // 打消差分
+                this.trashType = "0"
+
+                let confirm = window.confirm(
+                    this.date.toLocaleString('default', { day: 'numeric', month: 'long' }) + " のゴミ収集日を打ち消しますか？");
+                if (confirm) {
+                    await addTDailyScheduleConf(this.date, this.diffType, this.trashType);
+                    this.$parent.update();
+                }
+            } else {
+                this.diffType = "1" // 追加差分
+                this.trashType = "1"
+                this.showModal = true;
+            }
+        },
+        close (event) {
+            event.preventDefault();
+            this.showModal = false;
+            this.isDutyDay = false;
+        },
+        async submit (event) {
+            event.preventDefault();
+            await addTDailyScheduleConf(this.date, this.diffType, this.trashType);
+            this.showModal = false;
+            this.$parent.update();
+        },
+    },
+    template: `
+<div class="modal-overlay" v-show="showModal">
+  <div class="modal-content">
+    <form>
+        <div>
+            ゴミの種類:
+            <label><input type="radio" v-model="trashType" value="1">燃えるゴミ</label>
+            <label><input type="radio" v-model="trashType" value="2">燃えないゴミ</label>
+            <label><input type="radio" v-model="trashType" value="3">その他</label>
+        </div>
+        <div>
+            <button type="button" v-on:click="submit">追加</button>
+            <button type="button" v-on:click="close">キャンセル</button>
+        </div>
+    </form>
+  </div>
+</div>
+`
+};
+
 const ManageApp = {
     data () {
         let currentDate = new Date();
@@ -472,9 +535,9 @@ const ManageApp = {
                 this.selectedDate.getDate() === day
             );
         },
-        selectDate(day) {
-            this.selectedDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), day);
-        },
+        // selectDate(day) {
+        //     this.selectedDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), day);
+        // },
         prevMonth() {
             this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1, 1);
             this.calcCalendarDays();
@@ -487,6 +550,7 @@ const ManageApp = {
     components: {
         MembersEditForm,
         WeeklyScheduleConfEditForm,
+        DailyScheduleConfEditForm,
         FirstMemberEditForm,
     },
 };
