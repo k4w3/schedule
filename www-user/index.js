@@ -114,8 +114,7 @@ const UserApp = {
                 this.dutiesList = duties;
             } else {
                 this.dutiesList = duties.filter((member) => {
-                    // return member.name.indexOf(findName) > -1;
-                    return member.name.includes(findName);
+                    return member.name.includes(findName) || member.ruby.includes(findName);
                 });
             }
         },

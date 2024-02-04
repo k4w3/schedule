@@ -54,7 +54,7 @@ const MembersEditForm = {
             <input type="text" v-model="name">
         </div>
         <div>
-            フリガナ:
+            ふりがな:
             <input type="text" v-model="ruby">
         </div>
         <div>

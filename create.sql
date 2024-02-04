@@ -26,10 +26,10 @@ CREATE TABLE IF NOT EXISTS TDailyScheduleConf (
 );
 
 
-insert into TMembers (team, name, ruby, ord) values(1, '山田太郎','ヤマダタロウ', 1);
-insert into TMembers (team, name, ruby, ord) values(1, '佐藤次郎','サトウジロウ', 2);
-insert into TMembers (team, name, ruby, ord) values(2, '鈴木三郎','スズキサブロウ', 3);
-insert into TMembers (team, name, ruby, ord) values(2, '高橋四郎','タカハシシロウ', 4);
+insert into TMembers (team, name, ruby, ord) values(1, '山田太郎','やまだたろう', 1);
+insert into TMembers (team, name, ruby, ord) values(1, '佐藤次郎','さとうじろう', 2);
+insert into TMembers (team, name, ruby, ord) values(2, '鈴木三郎','すずきさぶろう', 3);
+insert into TMembers (team, name, ruby, ord) values(2, '高橋四郎','たかはししろう', 4);
 
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 1);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 2);
