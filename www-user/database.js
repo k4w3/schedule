@@ -1,3 +1,16 @@
+function getTFirstMember() {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.open("GET", "/api/TMembers/firstMember");
+        req.onload = (event) => {
+            resolve(req.responseText);
+        };
+        req.send();
+    });
+};
+
+
+
 function selectTMembers() {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
@@ -20,67 +33,53 @@ function getTMembers(id) {
     });
 };
 
-function postTMembers(name, done) {
+function selectTWeeklyScheduleConf() {
     return new Promise((resolve, reject) => {
-
-        let postData = "name=" + encodeURIComponent(name);
-        postData += "&done=" + encodeURIComponent(done);
-
         let req = new XMLHttpRequest();
-        req.open("POST", "/api/TMembers");
+        req.open("GET", "/api/TWeeklyScheduleConf");
         req.onload = (event) => {
-            if (req.readyState === req.DONE) {
-                if (req.status === 200) {
-                    resolve(req.responseText);
-                } else {
-                    reject(req.responseText);
-                }
-            }
+            resolve(req.responseText);
         };
-
-        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        req.send(postData);
-    });
-};
-
-function putTMembers(name, done, id) {
-    return new Promise((resolve, reject) => {
-
-        let putData = "name=" + encodeURIComponent(name);
-        putData += "&done=" + encodeURIComponent(done);
-
-        let req = new XMLHttpRequest();
-        req.open("PUT", "/api/TMembers/" + id);
-        req.onload = (event) => {
-            if (req.readyState === req.DONE) {
-                if (req.status === 200) {
-                    resolve(req.responseText);
-                } else {
-                    reject(req.responseText);
-                }
-            }
-        };
-
-        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        req.send(putData);
-    });
-};
-
-function deleteTMembers(id) {
-    return new Promise((resolve, reject) => {
-
-        let req = new XMLHttpRequest();
-        req.open("DELETE", "/api/TMembers/" + id);
-        req.onload = (event) => {
-            if (req.readyState === req.DONE) {
-                if (req.status === 200) {
-                    resolve(req.responseText);
-                } else {
-                    reject(req.responseText);
-                }
-            }
-        };
-
         req.send();
+    });
+};
+
+function getTWeeklyScheduleConf(id) {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.open("GET", "/api/TWeeklyScheduleConf/" + id);
+        req.onload = (event) => {
+            resolve(req.responseText);
+        };
+        req.send();
+    });
+};
+
+
+
+function selectTDailyScheduleConf() {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.open("GET", "/api/TDailyScheduleConf");
+        req.onload = (event) => {
+            resolve(req.responseText);
+        };
+        req.send();
+    });
+};
+
+function getTDailyScheduleConf(date) {
+    return new Promise((resolve, reject) => {
+
+        let params = "date=" + encodeURIComponent(date);
+        // console.log(params);
+
+        let req = new XMLHttpRequest();
+        req.open("GET", "/api/TDailyScheduleConf/date?" + params);
+        req.onload = (event) => {
+            resolve(req.responseText);
+        };
+        req.send();
+        // console.log(req);
     });
 };
