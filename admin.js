@@ -202,20 +202,57 @@ router.get("/api/TDailyScheduleConf", (context) => {
     context.response.body = res;
 });
 
-router.get("/api/TDailyScheduleConf/:id", (context) => {
-    console.log("GET /api/TDailyScheduleConf:id");
+// router.get("/api/TDailyScheduleConf/:id", (context) => {
+//     console.log("GET /api/TDailyScheduleConf:id");
+//     const queryParams = getQuery(context, { mergeParams: true });
+//     console.log(queryParams);
+
+//     const db = new DB(dbName);
+//     let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDailyScheduleConf WHERE id=?", [queryParams.id]);
+//     db.close();
+//     if (res.length > 0) {
+//         context.response.body = res[0];
+//     } else {
+//         context.response.headers.set("content-type", "application/json; charset=UTF-8");
+//         context.response.body = "null";
+//     }
+// });
+
+router.get("/api/TDailyScheduleConf/date", (context) => {
+    console.log("GET /api/TDailyScheduleConf/date");
     const queryParams = getQuery(context, { mergeParams: true });
     console.log(queryParams);
 
     const db = new DB(dbName);
-    let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDailyScheduleConf WHERE id=?", [queryParams.id]);
+    let res = db.queryEntries("SELECT id, date, diffType, trashType FROM TDailyScheduleConf WHERE date = ?", [queryParams.date]);
+
     db.close();
-    if (res.length > 0) {
-        context.response.body = res[0];
-    } else {
-        context.response.headers.set("content-type", "application/json; charset=UTF-8");
-        context.response.body = "null";
-    }
+    context.response.body = res;
+    // console.log(res);
+});
+
+router.post("/kameyama/test", async (context) => {
+    // console.log("POST /api/TDailyScheduleConf");
+    // const params = await context.request.body({type:"form"}).value;
+    const params = await context.request.body({type:"text"}).value;
+    console.log(params);
+
+    // const db = new DB(dbName);
+    // db.query("INSERT INTO TDailyScheduleConf (date, diffType, trashType) VALUES (?,?,?)",
+    // [params.get("date"), params.get("diffType"), params.get("trashType")]);
+    // db.close();
+    // context.response.body = "OK";
+    context.response.body = '<html><body><div style="color:red;">foo</div></body></html>';
+});
+
+router.get("/kameyama/test", async (context) => {
+    const queryParams = getQuery(context, { mergeParams: true });
+    // const params = await context.request.body({type:"form"}).value;
+    // const params = await context.request.body({type:"text"}).value;
+    console.log(queryParams);
+
+    // context.response.body = "OK";
+    context.response.body = '<html><body><div style="color:red;">foo</div></body></html>';
 });
 
 router.post("/api/TDailyScheduleConf", async (context) => {
@@ -263,7 +300,8 @@ app.use(async (context, next) => {
     try {
         await context.send({
             root: `${Deno.cwd()}/www-admin`,
-            index: "index.html",
+            // index: "index.html",
+            index: "index2.html",
         });
     } catch {
         await next();
