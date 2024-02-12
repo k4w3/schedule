@@ -12,6 +12,8 @@ const UserApp = {
             firstMember: null,
             sortedMembers: [],
             duties: [],
+            findName: "",
+            dutiesList: [],
             calendarDays: [],
 
             currentMonth: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
@@ -28,6 +30,7 @@ const UserApp = {
         await this.loadFirstMember();
         this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
         this.duties = calcDuties(this.dutyDays, this.sortedMembers);
+        this.calcDutiesList(this.duties, this.findName);
         this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
     },
     computed: {
@@ -79,6 +82,7 @@ const UserApp = {
             await this.loadFirstMember();
             this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
             this.duties = calcDuties(this.dutyDays, this.sortedMembers);
+            this.calcDutiesList(this.duties, this.findName);
             this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
         },
         async loadMembers () {
@@ -100,6 +104,19 @@ const UserApp = {
         nextMonth() {
             this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
             this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
+        },
+        find (event) {
+            event.preventDefault();
+            this.calcDutiesList(this.duties, this.findName);
+        },
+        calcDutiesList (duties, findName) {
+            if (findName === undefined) {
+                this.dutiesList = duties;
+            } else {
+                this.dutiesList = duties.filter((member) => {
+                    return member.name.includes(findName) || member.ruby.includes(findName);
+                });
+            }
         },
         getTrashTypeString (trashType) {
             switch (trashType) {
