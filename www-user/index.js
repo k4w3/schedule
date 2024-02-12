@@ -3,7 +3,7 @@ const UserApp = {
         let currentDate = new Date();
         return {
             days: 0,
-            nYear: 1,
+            nYear: 2,
             scheduleConfs: [],
             weeklyScheduleConfs: [],
             dailyScheduleConfs: [],
@@ -21,13 +21,13 @@ const UserApp = {
         };
     },
     async mounted () {
-        this.days = calcDaysInNYear(this.nYear);
+        await this.loadFirstMember();
+        this.days = calcDaysInNYear(this.firstMember.originDay, this.nYear);
         await this.loadWeeklyScheduleConf();
         await this.loadDailyScheduleConf();
         this.scheduleConfs = calcScheduleConfs(this.weeklyScheduleConfs, this.dailyScheduleConfs, this.days);
         this.dutyDays = calcDutyDays(this.scheduleConfs);
         await this.loadMembers();
-        await this.loadFirstMember();
         this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
         this.duties = calcDuties(this.dutyDays, this.sortedMembers);
         this.calcDutiesList(this.duties, this.findName);
@@ -72,14 +72,13 @@ const UserApp = {
     },
     methods: {
         async update () {
-            let nYear = 1;
-            this.days = calcDaysInNYear(nYear);
+            await this.loadFirstMember();
+            this.days = calcDaysInNYear(this.firstMember.originDay, this.nYear);
             await this.loadWeeklyScheduleConf();
             await this.loadDailyScheduleConf();
             this.scheduleConfs = calcScheduleConfs(this.weeklyScheduleConfs, this.dailyScheduleConfs, this.days);
             this.dutyDays = calcDutyDays(this.scheduleConfs);
             await this.loadMembers();
-            await this.loadFirstMember();
             this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
             this.duties = calcDuties(this.dutyDays, this.sortedMembers);
             this.calcDutiesList(this.duties, this.findName);

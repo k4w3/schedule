@@ -9,11 +9,12 @@ function getTFirstMember() {
     });
 };
 
-function putTFirstMember(id) {
+function putTFirstMember(id, originDay) {
     return new Promise((resolve, reject) => {
         console.log("put");
 
         let putData = "id=" + encodeURIComponent(id);
+        putData += "&originDay=" + encodeURIComponent(originDay);
 
         let req = new XMLHttpRequest();
         req.open("PUT", "/api/TMembers/firstMember");

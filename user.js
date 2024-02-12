@@ -11,30 +11,39 @@ const dbName = "schedule.db";
 router.get("/api/TMembers/firstMember", (context) => {
     console.log("GET /api/TMembers/firstMember");
     const db = new DB(dbName);
-    let confFirstMemberIds = db.queryEntries("SELECT id FROM TFirstMember");
-    console.log(confFirstMemberIds);
+    let confFirstMember = db.queryEntries("SELECT id, originDay FROM TFirstMember");
+    let confFirstMemberIds = confFirstMember[0].id
+    let confFirstMemberOriginDay = confFirstMember[0].originDay
+    // console.log(confFirstMemberIds, confFirstMemberOriginDay);
 
     let res;
-    if (confFirstMemberIds.length) {
-        let confFirstMemberId = confFirstMemberIds[0].id;
+    // TFirstMemberテーブルにデータがある場合
+    if (confFirstMember.length) {
+        let confFirstMemberId = confFirstMemberIds;
         let confFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers WHERE id=?", [confFirstMemberId]);
+        // TMembersテーブルに存在するID
         if (confFirstMembers.length) {
             res = {
                 confMemberId: confFirstMembers[0].id,
-                calcMember: confFirstMembers[0]
+                calcMember: confFirstMembers[0],
+                originDay: confFirstMemberOriginDay
             }
+        // TMembersテーブルに存在しないID
         } else {
             let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
             res = {
-                confMemberId: confFirstMemberIds[0].id,
-                calcMember: calcFirstMembers[0]
+                confMemberId: confFirstMemberIds,
+                calcMember: calcFirstMembers[0],
+                originDay: confFirstMemberOriginDay
             }
         }
+    // TFirstMemberテーブルにデータがない場合
     } else {
         let calcFirstMembers = db.queryEntries("SELECT id, team, name, ruby, ord FROM TMembers ORDER BY ord LIMIT 1");
         res = {
             confMemberId: 0,
-            calcMember: calcFirstMembers[0]
+            calcMember: calcFirstMembers[0],
+            originDay: confFirstMemberOriginDay
         }
     }
 

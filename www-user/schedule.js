@@ -192,11 +192,11 @@ function calcWeekInfo (date) {
  * @param {*} n - n年分
  * @return 今日からn年分の日にちのリスト
  */
-function calcDaysInNYear (n) {
+function calcDaysInNYear (originDay, n) {
     let result = [];
-    let today = new Date();
-    let year = today.getFullYear();
-    let month = today.getMonth();
+    let od = new Date(originDay);
+    let year = od.getFullYear();
+    let month = od.getMonth();
     for (let i = 0; i < n; i++) {
         // result.push(calcDaysInYear(year, month));
         result = result.concat(calcDaysInYear(year, month));

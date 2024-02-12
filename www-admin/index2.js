@@ -154,6 +154,7 @@ const FirstMemberEditForm = {
         return {
             showModal: false,
             id: "0",
+            originDay: "",
         };
     },
     methods: {
@@ -161,6 +162,7 @@ const FirstMemberEditForm = {
             let item = itemX.calcMember;
             if (item) {
                 this.id = itemX.confMemberId;
+                this.originDay = new Date(itemX.originDay).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
             }
             this.showModal = true;
         },
@@ -170,10 +172,10 @@ const FirstMemberEditForm = {
         },
         async submit (event) {
             event.preventDefault();
-            if (this.id !== "0") {
-                await putTFirstMember(this.id);
+            if (this.originDay !== "") {
+                await putTFirstMember(this.id, new Date(this.originDay).getTime());
             } else {
-                await deleteTFirstMember();
+                window.alert("基準日を設定してください");
             }
             this.showModal = false;
             this.$parent.update();
@@ -183,12 +185,18 @@ const FirstMemberEditForm = {
 <div class="modal-overlay" v-show="showModal">
   <div class="modal-content">
     <form>
-        <select v-model="id">
-            <option value="0">なし</option>
-            <option v-for="member in this.$parent.members" :value="member.id">
-                {{member.name}}
-            </option>
-        </select>
+        <div>
+            先頭メンバー:
+            <select v-model="id">
+                <option v-for="member in this.$parent.members" v-bind:value="member.id">
+                    {{member.name}}
+                </option>
+            </select>
+        </div>
+        <div>
+            基準日:
+            <input type="date" v-model="originDay">
+        </div>
         <div>
             <button type="button" v-on:click="submit">送信</button>
             <button type="button" v-on:click="close">キャンセル</button>
@@ -324,7 +332,7 @@ const ManageApp = {
         let currentDate = new Date();
         return {
             days: 0,
-            nYear: 1,
+            nYear: 2,
             scheduleConfs: [],
             weeklyScheduleConfs: [],
             dailyScheduleConfs: [],
@@ -340,13 +348,13 @@ const ManageApp = {
         };
     },
     async mounted () {
-        this.days = calcDaysInNYear(this.nYear);
+        await this.loadFirstMember();
+        this.days = calcDaysInNYear(this.firstMember.originDay, this.nYear);
         await this.loadWeeklyScheduleConf();
         await this.loadDailyScheduleConf();
         this.scheduleConfs = calcScheduleConfs(this.weeklyScheduleConfs, this.dailyScheduleConfs, this.days);
         this.dutyDays = calcDutyDays(this.scheduleConfs);
         await this.loadMembers();
-        await this.loadFirstMember();
         this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
         this.duties = calcDuties(this.dutyDays, this.sortedMembers);
         this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
@@ -390,14 +398,13 @@ const ManageApp = {
     },
     methods: {
         async update () {
-            let nYear = 1;
-            this.days = calcDaysInNYear(nYear);
+            await this.loadFirstMember();
+            this.days = calcDaysInNYear(this.firstMember.originDay, this.nYear);
             await this.loadWeeklyScheduleConf();
             await this.loadDailyScheduleConf();
             this.scheduleConfs = calcScheduleConfs(this.weeklyScheduleConfs, this.dailyScheduleConfs, this.days);
             this.dutyDays = calcDutyDays(this.scheduleConfs);
             await this.loadMembers();
-            await this.loadFirstMember();
             this.sortedMembers = calcSortedMembers(this.members, this.firstMember);
             this.duties = calcDuties(this.dutyDays, this.sortedMembers);
             this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);

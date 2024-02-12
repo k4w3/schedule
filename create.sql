@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS TMembers (
 );
 
 CREATE TABLE IF NOT EXISTS TFirstMember (
-  id INTEGER
+  id INTEGER,
+  originDay INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS TWeeklyScheduleConf (
@@ -30,6 +31,8 @@ insert into TMembers (team, name, ruby, ord) values(1, '山田太郎','やまだ
 insert into TMembers (team, name, ruby, ord) values(1, '佐藤次郎','さとうじろう', 2);
 insert into TMembers (team, name, ruby, ord) values(2, '鈴木三郎','すずきさぶろう', 3);
 insert into TMembers (team, name, ruby, ord) values(2, '高橋四郎','たかはししろう', 4);
+
+insert into TFirstMember (id, originDay) values(1, 1680274800000); -- 2023/4/1 00:00:000
 
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 1);
 insert into TWeeklyScheduleConf (trashType, weekday, weekord) values(1, 1, 2);

@@ -79,8 +79,8 @@
 
     <h2 style="border-bottom: 1px solid">当番表</h2>
     <div v-if="firstMember" style="display: flex;">
-        <div>先頭メンバー > {{ firstMember.calcMember.name}}{{firstMember.confMemberId ? "" : "(なし)" }}</div>
-        <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">編集</button>
+        <!-- <div>先頭メンバー > {{ firstMember.calcMember.name}}{{firstMember.confMemberId ? "" : "(なし)" }}</div> -->
+        <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">設定</button>
     </div>
     <div>
         <table border="1">
