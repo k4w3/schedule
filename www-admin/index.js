@@ -444,17 +444,13 @@ const ManageApp = {
             this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 1);
             this.calendarDays = calcCalendarDays(this.daysInMonth, this.duties);
         },
+        /**
+        * ゴミ種別を文字列にして返す
+        * @param {*} trashType - ゴミ種別
+        * @return ゴミ種別の文字列
+        */
         getTrashTypeString (trashType) {
-            switch (trashType) {
-                case 1:
-                    return "燃えるゴミ";
-                case 2:
-                    return "燃えないゴミ";
-                case 3:
-                    return "その他";
-                default:
-                    return "不明";
-            }
+            return getTrashTypeString(trashType);
         },
         /**
         * 曜日を文字列にして返す
@@ -462,24 +458,7 @@ const ManageApp = {
         * @return 曜日の文字列
         */
         getWeekdayString (weekday) {
-            switch (weekday) {
-                case 0:
-                    return "日";
-                case 1:
-                    return "月";
-                case 2:
-                    return "火";
-                case 3:
-                    return "水";
-                case 4:
-                    return "木";
-                case 5:
-                    return "金";
-                case 6:
-                    return "土";
-                default:
-                    return "不明";
-            }
+            return getWeekdayString(weekday);
         },
     },
     components: {
