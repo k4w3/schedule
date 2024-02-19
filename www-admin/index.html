@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="./style.css" />
     <script type="text/javascript" src="https://unpkg.com/vue@3.2.31/dist/vue.global.prod.js"></script>
     <script src="./database.js"></script>
+    <script src="./schedule.js"></script>
     <script src="./index.js"></script>
 </head>
 <body id="app" v-cloak>
@@ -25,7 +26,7 @@
             <tr>
                 <th>班</th>
                 <th>名前</th>
-                <th>フリガナ</th>
+                <th>ふりがな</th>
                 <th>順番</th>
                 <th></th>
                 <th></th>
@@ -78,8 +79,8 @@
 
     <h2 style="border-bottom: 1px solid">当番表</h2>
     <div v-if="firstMember" style="display: flex;">
-        <div>先頭メンバー > {{ firstMember.calcMember.name}}{{firstMember.confMemberId ? "" : "(なし)" }}</div>
-        <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">編集</button>
+        <!-- <div>先頭メンバー > {{ firstMember.calcMember.name}}{{firstMember.confMemberId ? "" : "(なし)" }}</div> -->
+        <button type="button" v-on:click="$refs.firstMemberEditForm.open(firstMember)">設定</button>
     </div>
     <div>
         <table border="1">
@@ -102,6 +103,7 @@
         </table>
     </div>
 
+    <h2 style="border-bottom: 1px solid">当番カレンダー</h2>
     <div class="calendar" v-if="sortedMembers.length > 0">
         <div>
             <button v-on:click="prevMonth">&lt;</button>
